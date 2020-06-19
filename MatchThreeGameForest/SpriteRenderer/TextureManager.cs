@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
-namespace MatchThreeGameForest.Textures
+namespace MatchThreeGameForest.TextureRenderer
 {
     static class TextureManager
     {
