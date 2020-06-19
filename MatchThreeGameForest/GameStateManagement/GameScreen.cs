@@ -77,9 +77,9 @@ namespace MatchThreeGameForest.GameStateManagement
 
 
         /// <summary>
-        /// Gets the current position of the screen transition, ranging
-        /// from zero (fully active, no transition) to one (transitioned
-        /// fully off to nothing).
+        /// Gets the current position of the screen transition
+        /// zero - fully active, no transition
+        /// one - transitioned fully off to nothing.
         /// </summary>
         public float TransitionPosition
         {
