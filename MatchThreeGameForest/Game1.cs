@@ -9,14 +9,13 @@ namespace MatchThreeGameForest
     {
         public static Game1 instance;
 
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
-
-        private Texture2D testTexture;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+        private SpriteFont font;
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
@@ -33,8 +32,9 @@ namespace MatchThreeGameForest
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            font = Content.Load<SpriteFont>("Fonts/Font");
             TextureManager.Init(this.Content);
 
             // TODO: use this.Content to load your game content here
@@ -52,9 +52,19 @@ namespace MatchThreeGameForest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.AntiqueWhite);
+
+            spriteBatch.Begin();
 
             // TODO: Add your drawing code here
+
+            spriteBatch.DrawString(font, "Score", new Vector2(100, 100), Color.Black);
+            spriteBatch.Draw(TextureManager.Cell, new Rectangle(30, 30, 50, 50), Color.White);
+            spriteBatch.Draw(TextureManager.Diamond, new Rectangle(30, 30, 50, 50), Color.White);
+
+            spriteBatch.End();
+
+
 
             base.Draw(gameTime);
         }
