@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MatchThreeGameForest.GameLogic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MatchThreeGameForest.Gui.Screens
@@ -29,13 +30,12 @@ namespace MatchThreeGameForest.Gui.Screens
 
         public override void Draw(GameTime gameTime)
         {
-            playerScore = instance.GetPlayerScore();
+            playerScore = ScoreProvider.ScoreString;
 
             var spriteBatch = Game1.instance.spriteBatch;
             spriteBatch.Begin();
+
             spriteBatch.Draw(gameOverScreen, new Vector2((viewport.Width - gameOverScreen.Width) / 2, (viewport.Height - gameOverScreen.Height) / 2), Color.White);
-
-
             spriteBatch.DrawString(font, playerScore, new Vector2((viewport.Width - font.MeasureString(playerScore).X) / 2, 170), Color.Black);
 
             spriteBatch.End();
