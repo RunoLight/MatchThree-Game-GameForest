@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using System;
+
 namespace MatchThreeGameForest.Gui
 {
     class Clickable : DrawableGameComponent
@@ -24,11 +26,9 @@ namespace MatchThreeGameForest.Gui
             Rectangle = targetRectangle;
         }
 
-        protected Clickable() : base(Game1.instance)
-        {
-        }
+        protected Clickable() : base(Game1.instance) { }
 
-        protected void HandleInput()
+        public virtual void HandleInput()
         {
             IsHighlighted = false;
             IsClicked = false;
@@ -42,11 +42,22 @@ namespace MatchThreeGameForest.Gui
     class Button : Clickable
     {
         protected readonly Texture2D texture;
+
+        public event EventHandler<PlayerIndexEventArgs> Clicked;
+
         public Button(Texture2D texture, Point position)
         {
             this.texture = texture;
             Rectangle = new Rectangle(position, new Point(this.texture.Width, this.texture.Height));
         }
+
+        public override void HandleInput()
+        {
+            base.HandleInput();
+            if (IsClicked && Clicked != null)
+                Clicked(this, new PlayerIndexEventArgs(PlayerIndex.One));
+        }
+
         public override void Update(GameTime gameTime)
         {
             HandleInput();

@@ -15,14 +15,14 @@ namespace MatchThreeGameForest.Gui.Screens
             var width = (viewport.Width - playButtonTexture.Width) / 2;
             var height = (viewport.Height - playButtonTexture.Height) / 2;
 
-            var playButton = new MenuEntry(playButtonTexture, new Point(width, height));
-            playButton.Selected += PlayGameMenuEntrySelected;
-            MenuEntries.Add(playButton);
+            var playButton = new Button(playButtonTexture, new Point(width, height));
+            playButton.Clicked += PlayGameMenuClicked;
+            MenuButtons.Add(playButton);
         }
 
-        void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        void PlayGameMenuClicked(object sender, PlayerIndexEventArgs e)
         {
-            LoadingScreen.Load(ScreenManager, true, e.PlayerIndex, new GameplayScreen());
+            LoadingScreen.Load(ScreenManager, new GameplayScreen());
         }
 
         protected override void OnCancel(PlayerIndex playerIndex)
