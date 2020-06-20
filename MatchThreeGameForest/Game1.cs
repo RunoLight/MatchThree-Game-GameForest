@@ -60,5 +60,12 @@ namespace MatchThreeGameForest
             GraphicsDevice.Clear(Color.AntiqueWhite);
             base.Draw(gameTime);
         }
+
+        //TODO MOVE IT TO GAME LOGIC CLASS
+        int itsStaticVariableForNow = 10;
+        public string GetPlayerScore()
+        {
+            return "Your score: " + itsStaticVariableForNow.ToString();
+        }
     }
 }

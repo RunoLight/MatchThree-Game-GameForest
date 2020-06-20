@@ -7,7 +7,10 @@ namespace MatchThreeGameForest.Gui.Screens
     {
         private Texture2D gameOverScreen;
 
+        Game1 instance = Game1.instance;
         Viewport viewport = Game1.instance.GraphicsDevice.Viewport;
+        SpriteFont font = Game1.instance.font;
+        string playerScore;
 
         public EndGameScreen()
         {
@@ -26,9 +29,15 @@ namespace MatchThreeGameForest.Gui.Screens
 
         public override void Draw(GameTime gameTime)
         {
+            playerScore = instance.GetPlayerScore();
+
             var spriteBatch = Game1.instance.spriteBatch;
             spriteBatch.Begin();
             spriteBatch.Draw(gameOverScreen, new Vector2((viewport.Width - gameOverScreen.Width) / 2, (viewport.Height - gameOverScreen.Height) / 2), Color.White);
+
+
+            spriteBatch.DrawString(font, playerScore, new Vector2((viewport.Width - font.MeasureString(playerScore).X) / 2, 170), Color.Black);
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
