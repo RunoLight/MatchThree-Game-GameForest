@@ -103,6 +103,7 @@ namespace MatchThreeGameForest.GameStateManagement
             // we must set EnabledGestures before we can query for them, but
             // we don't assume the game wants to read them.
             TouchPanel.EnabledGestures = GestureType.None;
+            spriteBatch = Game1.instance.spriteBatch;
         }
 
 
@@ -126,8 +127,8 @@ namespace MatchThreeGameForest.GameStateManagement
             ContentManager content = Game.Content;
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            font = content.Load<SpriteFont>("menufont");
-            blankTexture = content.Load<Texture2D>("blank");
+            font = content.Load<SpriteFont>("Fonts/Font");
+            blankTexture = content.Load<Texture2D>("Sprites/PlayButton");
 
             // Tell each of the screens to load their content.
             foreach (GameScreen screen in screens)

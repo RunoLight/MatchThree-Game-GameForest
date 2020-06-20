@@ -1,7 +1,7 @@
 ﻿using MatchThreeGameForest.GameStateManagement;
 using System;
 
-namespace MatchThreeGameForest.Screens
+namespace MatchThreeGameForest.Gui
 {
     class ScreenFactory : IScreenFactory
     {
