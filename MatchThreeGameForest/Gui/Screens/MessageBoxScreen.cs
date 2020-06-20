@@ -10,7 +10,7 @@ namespace MatchThreeGameForest.Gui.Screens
     class MessageBoxScreen : GameScreen
     {
         string message;
-        Texture2D gradientTexture;
+        Texture2D boxTexture;
 
         InputAction menuSelect;
         InputAction menuCancel;
@@ -18,14 +18,12 @@ namespace MatchThreeGameForest.Gui.Screens
         public event EventHandler<PlayerIndexEventArgs> Accepted;
         public event EventHandler<PlayerIndexEventArgs> Cancelled;
 
-        public MessageBoxScreen(string message = "A=ok, B=cancel")
-            : this(message, true)
-        { }
+        public MessageBoxScreen(string message) : this(message, true) { }
 
         public MessageBoxScreen(string message, bool addDefaultUsageText)
         {
-            const string usageText = "\nA button, Space, Enter = ok" +
-                                     "\nB button, Esc = cancel";
+            const string usageText = "\nSpace, Enter = exit" +
+                                     "\nEsc = continue";
 
             if (addDefaultUsageText)
                 this.message = message + usageText;
@@ -52,8 +50,7 @@ namespace MatchThreeGameForest.Gui.Screens
             if (!instancePreserved)
             {
                 ContentManager content = ScreenManager.Game.Content;
-                //TODO ADD TEXTURE HERE
-                gradientTexture = content.Load<Texture2D>("Sprites/PlayButton");
+                boxTexture = content.Load<Texture2D>("Sprites/BlankTexture");
             }
         }
 
@@ -103,15 +100,16 @@ namespace MatchThreeGameForest.Gui.Screens
                                                           (int)textSize.Y + vPad * 2);
 
             // Fade the popup alpha during transitions.
-            Color color = Color.White * TransitionAlpha;
+            Color textureColor = Color.White * TransitionAlpha;
+            Color fontColor = Color.Black * TransitionAlpha;
 
             spriteBatch.Begin();
 
             // Draw the background rectangle.
-            spriteBatch.Draw(gradientTexture, backgroundRectangle, color);
+            spriteBatch.Draw(boxTexture, backgroundRectangle, textureColor);
 
             // Draw the message box text.
-            spriteBatch.DrawString(font, message, textPosition, color);
+            spriteBatch.DrawString(font, message, textPosition, fontColor);
 
             spriteBatch.End();
         }

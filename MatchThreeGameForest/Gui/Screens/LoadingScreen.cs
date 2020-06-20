@@ -84,7 +84,7 @@ namespace MatchThreeGameForest.Gui.Screens
                 Vector2 textSize = font.MeasureString(message);
                 Vector2 textPosition = (viewportSize - textSize) / 2;
 
-                Color color = Color.White * TransitionAlpha;
+                Color color = Color.Black * TransitionAlpha;
 
                 // Draw the text.
                 spriteBatch.Begin();

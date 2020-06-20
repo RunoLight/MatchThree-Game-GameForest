@@ -1,4 +1,5 @@
 ﻿using MatchThreeGameForest.GameStateManagement;
+using Microsoft.Xna.Framework;
 
 namespace MatchThreeGameForest.Gui.Screens
 {
@@ -6,8 +7,7 @@ namespace MatchThreeGameForest.Gui.Screens
     {
         public PauseMenuScreen() : base()
         {
-            // Create our menu entries.
-            MenuEntry resumeGameMenuEntry = new MenuEntry(TextureRenderer.TextureManager.Diamond, new Microsoft.Xna.Framework.Point(2, 2), "Resume game");
+            MenuEntry resumeGameMenuEntry = new MenuEntry(TextureRenderer.TextureManager.Diamond, new Point(280, 200));
             //MenuEntry quitGameMenuEntry = new MenuEntry("Quit Game");
 
             // Hook up menu event handlers.
