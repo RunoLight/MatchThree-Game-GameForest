@@ -1,13 +1,4 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// InputState.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.Collections.Generic;
@@ -15,10 +6,7 @@ using System.Collections.Generic;
 namespace MatchThreeGameForest.GameStateManagement
 {
     /// <summary>
-    /// Helper for reading input from keyboard, gamepad, and touch input. This class 
-    /// tracks both the current and previous state of the input devices, and implements 
-    /// query methods for high level input actions such as "move up through the menu"
-    /// or "pause the game".
+    /// Helper for reading input from keyboard.
     /// </summary>
     public class InputState
     {
@@ -37,9 +25,6 @@ namespace MatchThreeGameForest.GameStateManagement
         public readonly List<GestureSample> Gestures = new List<GestureSample>();
 
 
-        /// <summary>
-        /// Constructs a new input state.
-        /// </summary>
         public InputState()
         {
             CurrentKeyboardStates = new KeyboardState[MaxInputs];
@@ -72,10 +57,8 @@ namespace MatchThreeGameForest.GameStateManagement
                 }
             }
 
-            // Get the raw touch state from the TouchPanel
             TouchState = TouchPanel.GetState();
 
-            // Read in any detected gestures into our list for the screens to later process
             Gestures.Clear();
             while (TouchPanel.IsGestureAvailable)
             {
@@ -83,13 +66,6 @@ namespace MatchThreeGameForest.GameStateManagement
             }
         }
 
-
-        /// <summary>
-        /// Helper for checking if a key was pressed during this update. The
-        /// controllingPlayer parameter specifies which player to read input for.
-        /// If this is null, it will accept input from any player. When a keypress
-        /// is detected, the output playerIndex reports which player pressed it.
-        /// </summary>
         public bool IsKeyPressed(Keys key, PlayerIndex? controllingPlayer, out PlayerIndex playerIndex)
         {
             if (controllingPlayer.HasValue)
@@ -111,13 +87,6 @@ namespace MatchThreeGameForest.GameStateManagement
             }
         }
 
-
-        /// <summary>
-        /// Helper for checking if a button was pressed during this update.
-        /// The controllingPlayer parameter specifies which player to read input for.
-        /// If this is null, it will accept input from any player. When a button press
-        /// is detected, the output playerIndex reports which player pressed it.
-        /// </summary>
         public bool IsButtonPressed(Buttons button, PlayerIndex? controllingPlayer, out PlayerIndex playerIndex)
         {
             if (controllingPlayer.HasValue)
@@ -139,13 +108,6 @@ namespace MatchThreeGameForest.GameStateManagement
             }
         }
 
-
-        /// <summary>
-        /// Helper for checking if a key was newly pressed during this update. The
-        /// controllingPlayer parameter specifies which player to read input for.
-        /// If this is null, it will accept input from any player. When a keypress
-        /// is detected, the output playerIndex reports which player pressed it.
-        /// </summary>
         public bool IsNewKeyPress(Keys key, PlayerIndex? controllingPlayer, out PlayerIndex playerIndex)
         {
             if (controllingPlayer.HasValue)
@@ -168,13 +130,6 @@ namespace MatchThreeGameForest.GameStateManagement
             }
         }
 
-
-        /// <summary>
-        /// Helper for checking if a button was newly pressed during this update.
-        /// The controllingPlayer parameter specifies which player to read input for.
-        /// If this is null, it will accept input from any player. When a button press
-        /// is detected, the output playerIndex reports which player pressed it.
-        /// </summary>
         public bool IsNewButtonPress(Buttons button, PlayerIndex? controllingPlayer, out PlayerIndex playerIndex)
         {
             if (controllingPlayer.HasValue)

@@ -1,13 +1,4 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// MenuScreen.cs
-//
-// XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-using MatchThreeGameForest.GameStateManagement;
+﻿using MatchThreeGameForest.GameStateManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,13 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace MatchThreeGameForest.Gui
 {
-    /// <summary>
-    /// Base class for screens that contain a menu of options. The user can
-    /// move up and down to select an entry, or cancel to back out of the screen.
-    /// </summary>
     abstract class MenuScreen : GameScreen
     {
         List<MenuEntry> menuEntries = new List<MenuEntry>();
@@ -32,19 +18,11 @@ namespace MatchThreeGameForest.Gui
         InputAction menuSelect;
         InputAction menuCancel;
 
-        /// <summary>
-        /// Gets the list of menu entries, so derived classes can add
-        /// or change the menu contents.
-        /// </summary>
         protected IList<MenuEntry> MenuEntries
         {
             get { return menuEntries; }
         }
 
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public MenuScreen()
         {
 
@@ -52,34 +30,25 @@ namespace MatchThreeGameForest.Gui
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
             menuUp = new InputAction(
-                new Buttons[] { Buttons.DPadUp, Buttons.LeftThumbstickUp },
+                new Buttons[] { },
                 new Keys[] { Keys.Up },
                 true);
             menuDown = new InputAction(
-                new Buttons[] { Buttons.DPadDown, Buttons.LeftThumbstickDown },
+                new Buttons[] { },
                 new Keys[] { Keys.Down },
                 true);
             menuSelect = new InputAction(
-                new Buttons[] { Buttons.A, Buttons.Start },
+                new Buttons[] { },
                 new Keys[] { Keys.Enter, Keys.Space },
                 true);
             menuCancel = new InputAction(
-                new Buttons[] { Buttons.B, Buttons.Back },
+                new Buttons[] { },
                 new Keys[] { Keys.Escape },
                 true);
         }
 
-        /// <summary>
-        /// Responds to user input, changing the selected entry and accepting
-        /// or cancelling the menu.
-        /// </summary>
         public override void HandleInput(GameTime gameTime, InputState input)
         {
-            // For input tests we pass in our ControllingPlayer, which may
-            // either be null (to accept input from any player) or a specific index.
-            // If we pass a null controlling player, the InputState helper returns to
-            // us which player actually provided the input. We pass that through to
-            // OnSelectEntry and OnCancel, so they can tell which player triggered them.
             PlayerIndex playerIndex;
 
             // Move to the previous menu entry?
@@ -114,37 +83,21 @@ namespace MatchThreeGameForest.Gui
             }
         }
 
-
-        /// <summary>
-        /// Handler for when the user has chosen a menu entry.
-        /// </summary>
         protected virtual void OnSelectEntry(int entryIndex, PlayerIndex playerIndex)
         {
             menuEntries[entryIndex].OnSelectEntry(playerIndex);
         }
 
-
-        /// <summary>
-        /// Handler for when the user has cancelled the menu.
-        /// </summary>
         protected virtual void OnCancel(PlayerIndex playerIndex)
         {
             ExitScreen();
         }
 
-
-        /// <summary>
-        /// Helper overload makes it easy to use OnCancel as a MenuEntry event handler.
-        /// </summary>
         protected void OnCancel(object sender, PlayerIndexEventArgs e)
         {
             OnCancel(e.PlayerIndex);
         }
 
-        /// <summary>
-        /// Allows the screen the chance to position the menu entries. By default
-        /// all menu entries are lined up in a vertical list, centered on the screen.
-        /// </summary>
         protected virtual void UpdateMenuEntryLocations()
         {
             // Make the menu slide into place during transitions, using a
@@ -176,10 +129,6 @@ namespace MatchThreeGameForest.Gui
             }
         }
 
-
-        /// <summary>
-        /// Updates the menu.
-        /// </summary>
         public override void Update(GameTime gameTime, bool otherScreenHasFocus,
                                                        bool coveredByOtherScreen)
         {
@@ -194,10 +143,6 @@ namespace MatchThreeGameForest.Gui
             }
         }
 
-
-        /// <summary>
-        /// Draws the menu.
-        /// </summary>
         public override void Draw(GameTime gameTime)
         {
             // make sure our entries are in the right place before we draw them

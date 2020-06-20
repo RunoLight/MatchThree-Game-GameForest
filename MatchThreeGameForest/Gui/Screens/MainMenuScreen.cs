@@ -1,17 +1,6 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// MenuScreen.cs
-//
-// XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-#region Using Statements
-using MatchThreeGameForest.GameStateManagement;
+﻿using MatchThreeGameForest.GameStateManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-#endregion
 
 namespace MatchThreeGameForest.Gui.Screens
 {
@@ -19,15 +8,12 @@ namespace MatchThreeGameForest.Gui.Screens
     {
         public MainMenuScreen()
         {
-            // Create our menu entries.
             var content = Game1.instance.Content;
             var playButtonTexture = content.Load<Texture2D>("Sprites/PlayButton");
             var playButton = new MenuEntry(playButtonTexture, new Point(200, 200), "PLAY!");
 
-            // Hook up menu event handlers.
             playButton.Selected += PlayGameMenuEntrySelected;
 
-            // Add entries to the menu.
             MenuEntries.Add(playButton);
         }
 
@@ -55,11 +41,6 @@ namespace MatchThreeGameForest.Gui.Screens
             ScreenManager.AddScreen(confirmExitMessageBox, playerIndex);
         }
 
-
-        /// <summary>
-        /// Event handler for when the user selects ok on the "are you sure
-        /// you want to exit" message box.
-        /// </summary>
         void ConfirmExitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
         {
             ScreenManager.Game.Exit();

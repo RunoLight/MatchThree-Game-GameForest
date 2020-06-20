@@ -1,37 +1,14 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// InputAction.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace MatchThreeGameForest.GameStateManagement
 {
-    /// <summary>
-    /// Defines an action that is designated by some set of buttons and/or keys.
-    /// 
-    /// The way actions work is that you define a set of buttons and keys that trigger the action. You can
-    /// then evaluate the action against an InputState which will test to see if any of the buttons or keys
-    /// are pressed by a player. You can also set a flag that indicates if the action only occurs once when
-    /// the buttons/keys are first pressed or whether the action should occur each frame.
-    /// 
-    /// Using this InputAction class means that you can configure new actions based on keys and buttons
-    /// without having to directly modify the InputState type. This means more customization by your games
-    /// without having to change the core classes of Game State Management.
-    /// </summary>
     public class InputAction
     {
         private readonly Buttons[] buttons;
         private readonly Keys[] keys;
         private readonly bool newPressOnly;
 
-        // These delegate types map to the methods on InputState. We use these to simplify the evalute method
-        // by allowing us to map the appropriate delegates and invoke them, rather than having two separate code paths.
         private delegate bool ButtonPress(Buttons button, PlayerIndex? controllingPlayer, out PlayerIndex player);
         private delegate bool KeyPress(Keys key, PlayerIndex? controllingPlayer, out PlayerIndex player);
 

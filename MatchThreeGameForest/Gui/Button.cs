@@ -1,21 +1,9 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// Button.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace MatchThreeGameForest.Gui
 {
-    /// <summary>
-    /// A special button that handles toggling between "On" and "Off"
-    /// </summary>
     class Clickable : DrawableGameComponent
     {
         protected Rectangle Rectangle { get; set; }
@@ -30,8 +18,6 @@ namespace MatchThreeGameForest.Gui
         public bool IsClicked;
 
         protected new Game1 Game { get { return (Game1)base.Game; } }
-
-        private ButtonState oldClickState = ButtonState.Released;
 
         protected Clickable(Rectangle targetRectangle) : base(Game1.instance)
         {
@@ -50,9 +36,6 @@ namespace MatchThreeGameForest.Gui
             if (!Rectangle.Contains(new Point(mouseState.X, mouseState.Y))) return;
             IsHighlighted = true;
             IsClicked = mouseState.LeftButton == ButtonState.Pressed;
-
-            //dlt
-            oldClickState = mouseState.LeftButton;
         }
     }
 

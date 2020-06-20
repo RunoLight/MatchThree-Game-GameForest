@@ -1,15 +1,4 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// GameplayScreen.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-#region Using Statements
-
-using MatchThreeGameForest.GameStateManagement;
+﻿using MatchThreeGameForest.GameStateManagement;
 using MatchThreeGameForest.TextureRenderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -18,18 +7,10 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Threading;
 
-#endregion
-
 namespace MatchThreeGameForest.Gui.Screens
 {
-    /// <summary>
-    /// This screen implements the actual game logic. It is just a
-    /// placeholder to get the idea across: you'll probably want to
-    /// put some more interesting gameplay in here!
-    /// </summary>
     class GameplayScreen : GameScreen
     {
-
         ContentManager content;
         SpriteFont gameFont;
 
@@ -43,10 +24,6 @@ namespace MatchThreeGameForest.Gui.Screens
 
         private Button playButton;
 
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public GameplayScreen()
         {
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
@@ -58,10 +35,6 @@ namespace MatchThreeGameForest.Gui.Screens
                 true);
         }
 
-
-        /// <summary>
-        /// Load graphics content for the game.
-        /// </summary>
         public override void Activate(bool instancePreserved)
         {
             if (!instancePreserved)
@@ -85,27 +58,16 @@ namespace MatchThreeGameForest.Gui.Screens
             }
         }
 
-
         public override void Deactivate()
         {
             base.Deactivate();
         }
 
-
-        /// <summary>
-        /// Unload graphics content used by the game.
-        /// </summary>
         public override void Unload()
         {
             content.Unload();
         }
 
-
-        /// <summary>
-        /// Updates the state of the game. This method checks the GameScreen.IsActive
-        /// property, so the game will stop updating when the pause menu is active,
-        /// or if you tab away to a different application.
-        /// </summary>
         public override void Update(GameTime gameTime, bool otherScreenHasFocus,
                                                        bool coveredByOtherScreen)
         {
@@ -123,11 +85,6 @@ namespace MatchThreeGameForest.Gui.Screens
             }
         }
 
-
-        /// <summary>
-        /// Lets the game respond to player input. Unlike the Update method,
-        /// this will only be called when the gameplay screen is active.
-        /// </summary>
         public override void HandleInput(GameTime gameTime, InputState input)
         {
             if (input == null)
@@ -139,17 +96,11 @@ namespace MatchThreeGameForest.Gui.Screens
             KeyboardState keyboardState = input.CurrentKeyboardStates[playerIndex];
             GamePadState gamePadState = input.CurrentGamePadStates[playerIndex];
 
-            // The game pauses either if the user presses the pause button, or if
-            // they unplug the active gamepad. This requires us to keep track of
-            // whether a gamepad was ever plugged in, because we don't want to pause
-            // on PC if they are playing with a keyboard and have no gamepad at all!
-            bool gamePadDisconnected = !gamePadState.IsConnected &&
-                                       input.GamePadWasConnected[playerIndex];
-
             PlayerIndex player;
-            if (pauseAction.Evaluate(input, ControllingPlayer, out player) || gamePadDisconnected)
+            if (pauseAction.Evaluate(input, ControllingPlayer, out player))
             {
                 ScreenManager.AddScreen(new PauseMenuScreen(), ControllingPlayer);
+                return;
             }
             else
             {
@@ -190,13 +141,10 @@ namespace MatchThreeGameForest.Gui.Screens
 
         public override void Draw(GameTime gameTime)
         {
-            // This game has a blue background. Why? Because!
             ScreenManager.GraphicsDevice.Clear(ClearOptions.Target,
                                                Color.CornflowerBlue, 0, 0);
 
-            // Our player and enemy are both actually just text strings.
-            //SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
-            SpriteBatch spriteBatch = Game1.instance.spriteBatch;
+            SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
 
             spriteBatch.Begin();
 
@@ -214,8 +162,6 @@ namespace MatchThreeGameForest.Gui.Screens
 
                 ScreenManager.FadeBackBufferToBlack(alpha);
             }
-
-
         }
     }
 }

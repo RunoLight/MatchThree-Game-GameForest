@@ -1,21 +1,9 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// GameScreen.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
 
 namespace MatchThreeGameForest.GameStateManagement
 {
-    /// <summary>
-    /// Enum describes the screen transition state.
-    /// </summary>
     public enum ScreenState
     {
         TransitionOn,
@@ -24,23 +12,8 @@ namespace MatchThreeGameForest.GameStateManagement
         Hidden,
     }
 
-
-    /// <summary>
-    /// A screen is a single layer that has update and draw logic, and which
-    /// can be combined with other layers to build up a complex menu system.
-    /// For instance the main menu, the options menu, the "are you sure you
-    /// want to quit" message box, and the main game itself are all implemented
-    /// as screens.
-    /// </summary>
     public abstract class GameScreen
     {
-        /// <summary>
-        /// Normally when one screen is brought up over the top of another,
-        /// the first screen will transition off to make room for the new
-        /// one. This property indicates whether the screen is only a small
-        /// popup, in which case screens underneath it do not need to bother
-        /// transitioning off.
-        /// </summary>
         public bool IsPopup
         {
             get { return isPopup; }
@@ -49,11 +22,6 @@ namespace MatchThreeGameForest.GameStateManagement
 
         bool isPopup = false;
 
-
-        /// <summary>
-        /// Indicates how long the screen takes to
-        /// transition on when it is activated.
-        /// </summary>
         public TimeSpan TransitionOnTime
         {
             get { return transitionOnTime; }
@@ -62,11 +30,6 @@ namespace MatchThreeGameForest.GameStateManagement
 
         TimeSpan transitionOnTime = TimeSpan.Zero;
 
-
-        /// <summary>
-        /// Indicates how long the screen takes to
-        /// transition off when it is deactivated.
-        /// </summary>
         public TimeSpan TransitionOffTime
         {
             get { return transitionOffTime; }
@@ -100,10 +63,6 @@ namespace MatchThreeGameForest.GameStateManagement
             get { return 1f - TransitionPosition; }
         }
 
-
-        /// <summary>
-        /// Gets the current screen transition state.
-        /// </summary>
         public ScreenState ScreenState
         {
             get { return screenState; }
@@ -129,10 +88,6 @@ namespace MatchThreeGameForest.GameStateManagement
 
         bool isExiting = false;
 
-
-        /// <summary>
-        /// Checks whether this screen is active and can respond to user input.
-        /// </summary>
         public bool IsActive
         {
             get
@@ -145,10 +100,6 @@ namespace MatchThreeGameForest.GameStateManagement
 
         bool otherScreenHasFocus;
 
-
-        /// <summary>
-        /// Gets the manager that this screen belongs to.
-        /// </summary>
         public ScreenManager ScreenManager
         {
             get { return screenManager; }
@@ -157,15 +108,6 @@ namespace MatchThreeGameForest.GameStateManagement
 
         ScreenManager screenManager;
 
-
-        /// <summary>
-        /// Gets the index of the player who is currently controlling this screen,
-        /// or null if it is accepting input from any player. This is used to lock
-        /// the game to a specific player profile. The main menu responds to input
-        /// from any connected gamepad, but whichever player makes a selection from
-        /// this menu is given control over all subsequent screens, so other gamepads
-        /// are inactive until the controlling player returns to the main menu.
-        /// </summary>
         public PlayerIndex? ControllingPlayer
         {
             get { return controllingPlayer; }
@@ -175,13 +117,6 @@ namespace MatchThreeGameForest.GameStateManagement
         PlayerIndex? controllingPlayer;
 
 
-        /// <summary>
-        /// Gets the gestures the screen is interested in. Screens should be as specific
-        /// as possible with gestures to increase the accuracy of the gesture engine.
-        /// For example, most menus only need Tap or perhaps Tap and VerticalDrag to operate.
-        /// These gestures are handled by the ScreenManager when screens change and
-        /// all gestures are placed in the InputState passed to the HandleInput method.
-        /// </summary>
         public GestureType EnabledGestures
         {
             get { return enabledGestures; }
@@ -201,13 +136,6 @@ namespace MatchThreeGameForest.GameStateManagement
 
         GestureType enabledGestures = GestureType.None;
 
-        /// <summary>
-        /// Gets whether or not this screen is serializable. If this is true,
-        /// the screen will be recorded into the screen manager's state and
-        /// its Serialize and Deserialize methods will be called as appropriate.
-        /// If this is false, the screen will be ignored during serialization.
-        /// By default, all screens are assumed to be serializable.
-        /// </summary>
         public bool IsSerializable
         {
             get { return isSerializable; }
@@ -216,35 +144,12 @@ namespace MatchThreeGameForest.GameStateManagement
 
         bool isSerializable = true;
 
-
-        /// <summary>
-        /// Activates the screen. Called when the screen is added to the screen manager or if the game resumes
-        /// from being paused or tombstoned.
-        /// </summary>
-        /// <param name="instancePreserved">
-        /// True if the game was preserved during deactivation, false if the screen is just being added or if the game was tombstoned.
-        /// On Xbox and Windows this will always be false.
-        /// </param>
         public virtual void Activate(bool instancePreserved) { }
 
-
-        /// <summary>
-        /// Deactivates the screen. Called when the game is being deactivated due to pausing or tombstoning.
-        /// </summary>
         public virtual void Deactivate() { }
 
-
-        /// <summary>
-        /// Unload content for the screen. Called when the screen is removed from the screen manager.
-        /// </summary>
         public virtual void Unload() { }
 
-
-        /// <summary>
-        /// Allows the screen to run logic, such as updating the transition position.
-        /// Unlike HandleInput, this method is called regardless of whether the screen
-        /// is active, hidden, or in the middle of a transition.
-        /// </summary>
         public virtual void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             this.otherScreenHasFocus = otherScreenHasFocus;
@@ -290,13 +195,8 @@ namespace MatchThreeGameForest.GameStateManagement
             }
         }
 
-
-        /// <summary>
-        /// Helper for updating the screen transition position.
-        /// </summary>
         bool UpdateTransition(GameTime gameTime, TimeSpan time, int direction)
         {
-            // How much should we move by?
             float transitionDelta;
 
             if (time == TimeSpan.Zero)
@@ -319,26 +219,10 @@ namespace MatchThreeGameForest.GameStateManagement
             return true;
         }
 
-
-        /// <summary>
-        /// Allows the screen to handle user input. Unlike Update, this method
-        /// is only called when the screen is active, and not when some other
-        /// screen has taken the focus.
-        /// </summary>
         public virtual void HandleInput(GameTime gameTime, InputState input) { }
 
-
-        /// <summary>
-        /// This is called when the screen should draw itself.
-        /// </summary>
         public virtual void Draw(GameTime gameTime) { }
 
-
-        /// <summary>
-        /// Tells the screen to go away. Unlike ScreenManager.RemoveScreen, which
-        /// instantly kills the screen, this method respects the transition timings
-        /// and will give the screen a chance to gradually transition off.
-        /// </summary>
         public void ExitScreen()
         {
             if (TransitionOffTime == TimeSpan.Zero)
