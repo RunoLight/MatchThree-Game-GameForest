@@ -22,7 +22,8 @@ namespace MatchThreeGameForest.Gui.Screens
 
         void PlayGameMenuClicked(object sender, PlayerIndexEventArgs e)
         {
-            LoadingScreen.Load(ScreenManager, new GameplayScreen());
+            //LoadingScreen.Load(ScreenManager, new GameplayScreen());
+            LoadingScreen.Load(ScreenManager, new EndGameScreen());
         }
 
         protected override void OnCancel(PlayerIndex playerIndex)

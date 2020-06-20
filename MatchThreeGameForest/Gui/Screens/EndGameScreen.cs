@@ -5,15 +5,18 @@ namespace MatchThreeGameForest.Gui.Screens
 {
     class EndGameScreen : MenuScreen
     {
-        private Texture2D GameOverLabel;
+        private Texture2D gameOverScreen;
+
+        Viewport viewport = Game1.instance.GraphicsDevice.Viewport;
+
         public EndGameScreen()
         {
             var content = Game1.instance.Content;
-            var okButtonTexture = content.Load<Texture2D>("OK");
-            var okButton = new Button(okButtonTexture, new Point(300, 400));
-            okButton.Clicked += OkButtonClicked;
-            MenuButtons.Add(okButton);
-            GameOverLabel = content.Load<Texture2D>("GameOver");
+            var menuButtonTexture = content.Load<Texture2D>("Sprites/MenuButton");
+            var menuButton = new Button(menuButtonTexture, new Point((viewport.Width - menuButtonTexture.Width) / 2, 300));
+            menuButton.Clicked += OkButtonClicked;
+            MenuButtons.Add(menuButton);
+            gameOverScreen = content.Load<Texture2D>("Sprites/Gameover");
         }
 
         void OkButtonClicked(object sender, PlayerIndexEventArgs e)
@@ -25,7 +28,7 @@ namespace MatchThreeGameForest.Gui.Screens
         {
             var spriteBatch = Game1.instance.spriteBatch;
             spriteBatch.Begin();
-            spriteBatch.Draw(GameOverLabel, new Vector2(200, 100), Color.White);
+            spriteBatch.Draw(gameOverScreen, new Vector2((viewport.Width - gameOverScreen.Width) / 2, (viewport.Height - gameOverScreen.Height) / 2), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
         }
