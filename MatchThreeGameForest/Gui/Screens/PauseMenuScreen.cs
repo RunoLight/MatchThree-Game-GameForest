@@ -32,8 +32,8 @@ namespace MatchThreeGameForest.Gui.Screens
 
         void ConfirmQuitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
         {
-            LoadingScreen.Load(ScreenManager, false, null, new BackgroundScreen(),
-                                                           new MainMenuScreen());
+            LoadingScreen.Load(ScreenManager, null, new BackgroundScreen(),
+                                                    new MainMenuScreen());
         }
     }
 }
