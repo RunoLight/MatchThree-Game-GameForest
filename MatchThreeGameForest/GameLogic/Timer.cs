@@ -33,6 +33,5 @@ namespace MatchThreeGameForest.GameLogic
 
             callback?.Invoke();
         }
-
     }
 }
