@@ -1,20 +1,7 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// ScreenManager.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-#region Using Statements
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.Collections.Generic;
-using System.Diagnostics;
-#endregion
 
 namespace MatchThreeGameForest.GameStateManagement
 {
@@ -26,49 +13,17 @@ namespace MatchThreeGameForest.GameStateManagement
     /// </summary>
     public class ScreenManager : DrawableGameComponent
     {
-        private const string StateFilename = "ScreenManagerState.xml";
 
         List<GameScreen> screens = new List<GameScreen>();
         List<GameScreen> tempScreensList = new List<GameScreen>();
 
         InputState input = new InputState();
 
-        SpriteBatch spriteBatch;
-        SpriteFont font;
-        Texture2D blankTexture;
+        public SpriteBatch SpriteBatch;
 
         bool isInitialized;
 
-        bool traceEnabled;
-
-        public SpriteBatch SpriteBatch
-        {
-            get { return spriteBatch; }
-        }
-
-        public SpriteFont Font
-        {
-            get { return font; }
-        }
-
-        public bool TraceEnabled
-        {
-            get { return traceEnabled; }
-            set { traceEnabled = value; }
-        }
-
-        public Texture2D BlankTexture
-        {
-            get { return blankTexture; }
-        }
-
-        public ScreenManager(Game game) : base(game)
-        {
-            // we must set EnabledGestures before we can query for them, but
-            // we don't assume the game wants to read them.
-            TouchPanel.EnabledGestures = GestureType.None;
-            spriteBatch = Game1.instance.spriteBatch;
-        }
+        public ScreenManager(Game game) : base(game) { }
 
         public override void Initialize()
         {
@@ -78,14 +33,8 @@ namespace MatchThreeGameForest.GameStateManagement
 
         protected override void LoadContent()
         {
-            // Load content belonging to the screen manager.
-            ContentManager content = Game.Content;
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            font = content.Load<SpriteFont>("Fonts/Font");
-            blankTexture = content.Load<Texture2D>("Sprites/BlankTexture");
-
-            // Tell each of the screens to load their content.
             foreach (GameScreen screen in screens)
             {
                 screen.Activate(false);
@@ -141,19 +90,6 @@ namespace MatchThreeGameForest.GameStateManagement
                         coveredByOtherScreen = true;
                 }
             }
-
-            if (traceEnabled)
-                TraceScreens();
-        }
-
-        void TraceScreens()
-        {
-            List<string> screenNames = new List<string>();
-
-            foreach (GameScreen screen in screens)
-                screenNames.Add(screen.GetType().Name);
-
-            Debug.WriteLine(string.Join(", ", screenNames.ToArray()));
         }
 
         public override void Draw(GameTime gameTime)
@@ -186,12 +122,6 @@ namespace MatchThreeGameForest.GameStateManagement
             TouchPanel.EnabledGestures = screen.EnabledGestures;
         }
 
-        /// <summary>
-        /// Removes a screen from the screen manager. You should normally
-        /// use GameScreen.ExitScreen instead of calling this directly, so
-        /// the screen can gradually transition off rather than just being
-        /// instantly removed.
-        /// </summary>
         public void RemoveScreen(GameScreen screen)
         {
             if (isInitialized)
@@ -208,31 +138,9 @@ namespace MatchThreeGameForest.GameStateManagement
             }
         }
 
-        /// <summary>
-        /// Expose an array holding all the screens. We return a copy rather
-        /// than the real master list, because screens should only ever be added
-        /// or removed using the AddScreen and RemoveScreen methods.
-        /// </summary>
         public GameScreen[] GetScreens()
         {
             return screens.ToArray();
-        }
-
-        public void FadeBackBufferToBlack(float alpha)
-        {
-            spriteBatch.Begin();
-            spriteBatch.Draw(blankTexture, GraphicsDevice.Viewport.Bounds, Color.Black * alpha);
-            spriteBatch.End();
-        }
-
-        public void Deactivate()
-        {
-            return;
-        }
-
-        public bool Activate(bool instancePreserved)
-        {
-            return false;
         }
     }
 }

@@ -1,38 +1,30 @@
-﻿using MatchThreeGameForest.GameStateManagement;
-using MatchThreeGameForest.TextureRenderer;
+﻿using MatchThreeGameForest.GameLogic;
+using MatchThreeGameForest.GameStateManagement;
+using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Threading;
+using static MatchThreeGameForest.GameLogic.Timer;
 
 namespace MatchThreeGameForest.Gui.Screens
 {
     class GameplayScreen : GameScreen
     {
+        private Grid grid = new Grid();
+
         ContentManager content;
+        SpriteBatch spriteBatch;
         SpriteFont gameFont;
 
-        Vector2 playerPosition = new Vector2(100, 100);
-
-        Random random = new Random();
-
-        float pauseAlpha;
-
-        InputAction pauseAction;
-
-        private Button playButton;
+        GameState gameState;
 
         public GameplayScreen()
         {
-            TransitionOnTime = TimeSpan.FromSeconds(1.5);
-            TransitionOffTime = TimeSpan.FromSeconds(0.5);
+            spriteBatch = MatchGame.instance.spriteBatch;
 
-            pauseAction = new InputAction(
-                new Buttons[] { Buttons.Start, Buttons.Back },
-                new Keys[] { Keys.Escape },
-                true);
+            gameState = GameState.GridFill;
+
+            grid.LoadContent(content);
         }
 
         public override void Activate(bool instancePreserved)
@@ -40,128 +32,111 @@ namespace MatchThreeGameForest.Gui.Screens
             if (!instancePreserved)
             {
                 if (content == null)
-                    content = new ContentManager(ScreenManager.Game.Services, "Content");
+                    content = MatchGame.instance.Content;
 
-                var texture = TextureManager.Cell;
-                playButton = new Button(texture, new Point(50, 50));
-                gameFont = content.Load<SpriteFont>("Fonts/Font");
+                // Timer
+                AddListener(() => { ScreenManager.AddScreen(new EndGameScreen(), null); });
+                ScreenManager.Game.ResetElapsedTime();
+                Reset(60);
 
-                // A real game would probably have more content than this sample, so
-                // it would take longer to load. We simulate that by delaying for a
-                // while, giving you a chance to admire the beautiful loading screen.
-                Thread.Sleep(1000);
+                // Score
+                GameScore.Reset();
 
-                // once the load has finished, we use ResetElapsedTime to tell the game's
-                // timing mechanism that we have just finished a very long frame, and that
-                // it should not try to catch up.
+                gameFont = Resources.Font;
+
                 ScreenManager.Game.ResetElapsedTime();
             }
         }
 
-        public override void Deactivate()
-        {
-            base.Deactivate();
-        }
-
-        public override void Unload()
-        {
-            content.Unload();
-        }
-
-        public override void Update(GameTime gameTime, bool otherScreenHasFocus,
-                                                       bool coveredByOtherScreen)
+        public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             base.Update(gameTime, otherScreenHasFocus, false);
 
-            // Gradually fade in or out depending on whether we are covered by the pause screen.
-            if (coveredByOtherScreen)
-                pauseAlpha = Math.Min(pauseAlpha + 1f / 32, 1);
-            else
-                pauseAlpha = Math.Max(pauseAlpha - 1f / 32, 0);
+            if (!IsActive)
+                return;
 
-            if (IsActive)
-            {
-                // Gameplay here
-            }
+            Timer.Tick(gameTime);
+            GameUpdate();
+            grid.Update(gameTime);
         }
 
-        public override void HandleInput(GameTime gameTime, InputState input)
+        private void GameUpdate()
         {
-            if (input == null)
-                throw new ArgumentNullException("input");
-
-            // Look up inputs for the active player profile.
-            int playerIndex = (int)ControllingPlayer.Value;
-
-            KeyboardState keyboardState = input.CurrentKeyboardStates[playerIndex];
-            GamePadState gamePadState = input.CurrentGamePadStates[playerIndex];
-
-            PlayerIndex player;
-            if (pauseAction.Evaluate(input, ControllingPlayer, out player))
-            {
-                ScreenManager.AddScreen(new PauseMenuScreen(), ControllingPlayer);
+            if (grid.IsAnimating)
                 return;
-            }
-            else
+
+            var score = 0;
+
+            switch (gameState)
             {
-                // Otherwise move the player position.
-                Vector2 movement = Vector2.Zero;
+                case GameState.GridFill:
+                    //true if blocks added
+                    gameState = grid.FillGrid() ? GameState.MatchAfterFill : GameState.Input;
+                    break;
 
-                if (keyboardState.IsKeyDown(Keys.Left))
-                    movement.X--;
+                case GameState.MatchAfterFill:
+                    score = grid.MatchAndGetPoints();
+                    if (score > 0)
+                    {
+                        GameScore.Add(score);
+                        gameState = GameState.CellFalling;
+                    }
+                    else
+                    {
+                        gameState = GameState.Input;
+                    }
+                    break;
 
-                if (keyboardState.IsKeyDown(Keys.Right))
-                    movement.X++;
+                case GameState.CellFalling:
+                    grid.DropCells();
+                    gameState = GameState.GridFill;
+                    break;
 
-                if (keyboardState.IsKeyDown(Keys.Up))
-                    movement.Y--;
+                case GameState.Input:
+                    //true if swapped blocks
+                    if (grid.UserInput())
+                    {
+                        gameState = GameState.Swap;
+                    }
+                    break;
 
-                if (keyboardState.IsKeyDown(Keys.Down))
-                    movement.Y++;
+                case GameState.Swap:
+                    grid.Swap();
+                    gameState = GameState.MatchAfterSwap;
+                    break;
 
-                Vector2 thumbstick = gamePadState.ThumbSticks.Left;
+                case GameState.MatchAfterSwap:
+                    score = grid.MatchAndGetPoints();
+                    if (score > 0)
+                    {
+                        GameScore.Add(score);
+                        gameState = GameState.CellFalling;
+                    }
+                    else
+                    {
+                        gameState = GameState.SwapBack;
+                    }
+                    break;
 
-                movement.X += thumbstick.X;
-                movement.Y -= thumbstick.Y;
+                case GameState.SwapBack:
+                    grid.SwapBack();
+                    gameState = GameState.Input;
+                    break;
 
-                if (input.TouchState.Count > 0)
-                {
-                    Vector2 touchPosition = input.TouchState[0].Position;
-                    Vector2 direction = touchPosition - playerPosition;
-                    direction.Normalize();
-                    movement += direction;
-                }
 
-                if (movement.Length() > 1)
-                    movement.Normalize();
-
-                playerPosition += movement * 8f;
             }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            ScreenManager.GraphicsDevice.Clear(ClearOptions.Target,
-                                               Color.CornflowerBlue, 0, 0);
-
-            SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
+            ScreenManager.GraphicsDevice.Clear(ClearOptions.Target, Color.AliceBlue, 0, 0);
 
             spriteBatch.Begin();
-
-            spriteBatch.DrawString(gameFont, "player", playerPosition, Color.Green);
-
-
+            spriteBatch.DrawString(gameFont, GameScore.ScoreString, new Vector2(500, 25), Color.Black);
+            spriteBatch.DrawString(gameFont, Timer.TimeRemaining, new Vector2(500, 75), Color.Black);
             spriteBatch.End();
 
-            //playButton.Draw(gameTime);
-
-            // If the game is transitioning on or off, fade it out to black.
-            if (TransitionPosition > 0 || pauseAlpha > 0)
-            {
-                float alpha = MathHelper.Lerp(1f - TransitionAlpha, 1f, pauseAlpha / 2);
-
-                ScreenManager.FadeBackBufferToBlack(alpha);
-            }
+            grid.Draw(spriteBatch);
         }
     }
 }

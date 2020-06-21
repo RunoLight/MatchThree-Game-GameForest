@@ -10,23 +10,12 @@ namespace MatchThreeGameForest.Gui
     {
         protected Rectangle Rectangle { get; set; }
 
-        public Point Position
-        {
-            get { return new Point(Rectangle.X, Rectangle.Y); }
-            set { Rectangle = new Rectangle(Position, value); }
-        }
-
         protected bool IsHighlighted { get; private set; }
         public bool IsClicked;
 
-        protected new Game1 Game { get { return (Game1)base.Game; } }
+        protected new MatchGame Game { get { return (MatchGame)base.Game; } }
 
-        protected Clickable(Rectangle targetRectangle) : base(Game1.instance)
-        {
-            Rectangle = targetRectangle;
-        }
-
-        protected Clickable() : base(Game1.instance) { }
+        protected Clickable() : base(MatchGame.instance) { }
 
         public virtual void HandleInput()
         {
@@ -42,7 +31,6 @@ namespace MatchThreeGameForest.Gui
     class Button : Clickable
     {
         protected readonly Texture2D texture;
-
         public event EventHandler<PlayerIndexEventArgs> Clicked;
 
         public Button(Texture2D texture, Point position)
@@ -67,9 +55,9 @@ namespace MatchThreeGameForest.Gui
         {
             var color = Color.White;
             if (IsHighlighted)
-                color = Color.Wheat;
+                color = Color.LightBlue;
             if (IsClicked)
-                color = Color.Orange;
+                color = Color.DodgerBlue;
             Game.spriteBatch.Begin();
             Game.spriteBatch.Draw(texture, Rectangle, color);
             Game.spriteBatch.End();

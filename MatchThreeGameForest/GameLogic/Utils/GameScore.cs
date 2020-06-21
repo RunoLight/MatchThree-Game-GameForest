@@ -1,6 +1,6 @@
 ﻿namespace MatchThreeGameForest.GameLogic
 {
-    static class ScoreProvider
+    static class GameScore
     {
         public static int Score = 0;
 

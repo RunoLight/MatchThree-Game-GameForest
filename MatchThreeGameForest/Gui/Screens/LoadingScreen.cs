@@ -1,4 +1,5 @@
 ﻿using MatchThreeGameForest.GameStateManagement;
+using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -15,12 +16,11 @@ namespace MatchThreeGameForest.Gui.Screens
         {
             foreach (GameScreen screen in screenManager.GetScreens())
                 screen.ExitScreen();
-            LoadingScreen loadingScreen = new LoadingScreen(screenManager,
-                                                            screensToLoad);
+            LoadingScreen loadingScreen = new LoadingScreen(screensToLoad);
             screenManager.AddScreen(loadingScreen, PlayerIndex.One);
         }
 
-        private LoadingScreen(ScreenManager screenManager, GameScreen[] screensToLoad)
+        private LoadingScreen(GameScreen[] screensToLoad)
         {
             this.screensToLoad = screensToLoad;
             TransitionOnTime = TimeSpan.FromSeconds(0.5);
@@ -54,21 +54,15 @@ namespace MatchThreeGameForest.Gui.Screens
                 otherScreensAreGone = true;
             }
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
-            SpriteFont font = ScreenManager.Font;
 
             const string message = "Loading...";
 
-            // Center the text in the viewport.
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
             Vector2 viewportSize = new Vector2(viewport.Width, viewport.Height);
-            Vector2 textSize = font.MeasureString(message);
+            Vector2 textSize = Resources.Font.MeasureString(message);
             Vector2 textPosition = (viewportSize - textSize) / 2;
-
-            Color color = Color.Black * TransitionAlpha;
-
-            // Draw the text.
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, message, textPosition, color);
+            spriteBatch.DrawString(Resources.Font, message, textPosition, Color.Black * TransitionAlpha);
             spriteBatch.End();
         }
     }
