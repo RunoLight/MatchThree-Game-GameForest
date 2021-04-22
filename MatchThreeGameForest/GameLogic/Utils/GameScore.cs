@@ -14,12 +14,6 @@
             Score = 0;
         }
 
-        public static string ScoreString
-        {
-            get
-            {
-                return "Your score: " + Score.ToString();
-            }
-        }
+        public static string FormattedScore => "Score: " + Score.ToString();
     }
 }

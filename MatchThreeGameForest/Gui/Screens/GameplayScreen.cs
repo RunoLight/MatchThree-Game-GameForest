@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using static MatchThreeGameForest.GameLogic.Timer;
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.Gui.Screens
 {
@@ -35,9 +36,9 @@ namespace MatchThreeGameForest.Gui.Screens
                     content = MatchGame.instance.Content;
 
                 // Timer
-                AddListener(() => { ScreenManager.AddScreen(new EndGameScreen(), null); });
+                Timer.AddListener(() => { ScreenManager.AddScreen(new EndGameScreen(), null); });
                 ScreenManager.Game.ResetElapsedTime();
-                Reset(60);
+                Reset(GameRoundTime);
 
                 // Score
                 GameScore.Reset();
@@ -132,8 +133,8 @@ namespace MatchThreeGameForest.Gui.Screens
             ScreenManager.GraphicsDevice.Clear(ClearOptions.Target, Color.AliceBlue, 0, 0);
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(gameFont, GameScore.ScoreString, new Vector2(500, 25), Color.Black);
-            spriteBatch.DrawString(gameFont, Timer.TimeRemaining, new Vector2(500, 75), Color.Black);
+            spriteBatch.DrawString(gameFont, GameScore.FormattedScore, new Vector2(500, 25), Color.Black);
+            spriteBatch.DrawString(gameFont, Timer.FormattedTimeRemaining, new Vector2(500, 75), Color.Black);
             spriteBatch.End();
 
             grid.Draw(spriteBatch);

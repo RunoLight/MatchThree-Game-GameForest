@@ -3,8 +3,10 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.ResourceManager
 {
@@ -27,16 +29,18 @@ namespace MatchThreeGameForest.ResourceManager
         {
             content = Content;
 
-            Font = content.Load<SpriteFont>("Fonts/Font");
+            Font = content.Load<SpriteFont>(PathFont);
 
-            Cell = content.Load<Texture2D>("Sprites/CellBackground");
-            GameOverScreen = content.Load<Texture2D>("Sprites/Gameover");
-            MenuButton = content.Load<Texture2D>("Sprites/MenuButton");
-            PlayButton = content.Load<Texture2D>("Sprites/PlayButton");
-            BlankTexture = content.Load<Texture2D>("Sprites/BlankTexture");
-            Destroyer = content.Load<Texture2D>("Sprites/Destroyer");
+            Cell = content.Load<Texture2D>(PathCellBackground);
+            GameOverScreen = content.Load<Texture2D>(PathGameOverScreen);
+            MenuButton = content.Load<Texture2D>(PathMenuButton);
+            PlayButton = content.Load<Texture2D>(PathPlayButton);
+            BlankTexture = content.Load<Texture2D>(PathBlankTexture);
+            Destroyer = content.Load<Texture2D>(PathDestroyer);
 
-            elementsDict.Add(ShapeType.Empty, Enumerable.Repeat(content.Load<Texture2D>("Sprites/BlankCell"), 4).ToArray());
+            elementsDict.Add(ShapeType.Empty, Enumerable.Repeat(content.Load<Texture2D>(PathBlankCell), 4).ToArray());
+
+            Debug.WriteLine($"Elements dicd size:{elementsDict.Count}");
 
             MemberInfo[] memberInfos = typeof(ShapeType).GetMembers(BindingFlags.Public | BindingFlags.Static);
             for (int i = 1; i < memberInfos.Length; i++)
@@ -51,18 +55,14 @@ namespace MatchThreeGameForest.ResourceManager
 
         private static Dictionary<ShapeType, Texture2D[]> elementsDict = new Dictionary<ShapeType, Texture2D[]>();
 
-        private static string element = "Sprites/Elements/";
-        private static string lineH = "LineH";
-        private static string lineV = "LineV";
-        private static string bomb = "Bomb";
         private static Texture2D[] buildTexturesByType(ShapeType type)
         {
             return new Texture2D[4]
             {
-                content.Load<Texture2D>(element + type),
-                content.Load<Texture2D>(element + type + lineV),
-                content.Load<Texture2D>(element + type + lineH),
-                content.Load<Texture2D>(element + type + bomb)
+                content.Load<Texture2D>(PathElements + type),
+                content.Load<Texture2D>(PathElements + type + TypeLineV),
+                content.Load<Texture2D>(PathElements + type + TypeLineH),
+                content.Load<Texture2D>(PathElements + type + TypeBomb)
             };
         }
         #endregion

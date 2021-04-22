@@ -2,6 +2,7 @@
 using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.Gui.Screens
 {
@@ -35,9 +36,9 @@ namespace MatchThreeGameForest.Gui.Screens
                              new Vector2((viewport.Width - gameOverScreen.Width) / 2, (viewport.Height - gameOverScreen.Height) / 2),
                              Color.White);
             spriteBatch.DrawString(Resources.Font,
-                                   GameScore.ScoreString,
-                                   new Vector2((viewport.Width - Resources.Font.MeasureString(GameScore.ScoreString).X) / 2, 170),
-                                   Color.Black);
+                                   GameScore.FormattedScore,
+                                   new Vector2((viewport.Width - Resources.Font.MeasureString(GameScore.FormattedScore).X) / 2, 170),
+                                   TextColor);
 
             spriteBatch.End();
             base.Draw(gameTime);

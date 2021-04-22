@@ -3,6 +3,7 @@ using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.Gui.Screens
 {
@@ -23,7 +24,7 @@ namespace MatchThreeGameForest.Gui.Screens
         private LoadingScreen(GameScreen[] screensToLoad)
         {
             this.screensToLoad = screensToLoad;
-            TransitionOnTime = TimeSpan.FromSeconds(0.5);
+            TransitionOnTime = TimeSpan.FromSeconds(MenuTransitionTime);
         }
 
         public override void Update(GameTime gameTime, bool otherScreenHasFocus,
@@ -55,14 +56,12 @@ namespace MatchThreeGameForest.Gui.Screens
             }
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
 
-            const string message = "Loading...";
-
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
             Vector2 viewportSize = new Vector2(viewport.Width, viewport.Height);
-            Vector2 textSize = Resources.Font.MeasureString(message);
+            Vector2 textSize = Resources.Font.MeasureString(LoadingScreenMessage);
             Vector2 textPosition = (viewportSize - textSize) / 2;
             spriteBatch.Begin();
-            spriteBatch.DrawString(Resources.Font, message, textPosition, Color.Black * TransitionAlpha);
+            spriteBatch.DrawString(Resources.Font, LoadingScreenMessage, textPosition, TextColor * TransitionAlpha);
             spriteBatch.End();
         }
     }

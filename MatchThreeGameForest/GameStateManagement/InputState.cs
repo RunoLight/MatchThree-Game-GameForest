@@ -46,7 +46,7 @@ namespace MatchThreeGameForest.GameStateManagement
                 LastKeyboardStates[i] = CurrentKeyboardStates[i];
                 LastGamePadStates[i] = CurrentGamePadStates[i];
 
-                CurrentKeyboardStates[i] = Keyboard.GetState((PlayerIndex)i);
+                CurrentKeyboardStates[i] = Keyboard.GetState();
                 CurrentGamePadStates[i] = GamePad.GetState((PlayerIndex)i);
 
                 // Keep track of whether a gamepad has ever been

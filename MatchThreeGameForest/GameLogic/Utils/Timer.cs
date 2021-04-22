@@ -5,24 +5,16 @@ namespace MatchThreeGameForest.GameLogic
 {
     static class Timer
     {
-        private static double timeToWait;
-        public static string TimeRemaining
-        {
-            get
-            {
-                return "Time: " + Math.Round(timeToWait, 0);
-            }
-        }
+        private static float timeToWait;
+        public static string FormattedTimeRemaining => "Time: " + Math.Round(timeToWait, 0);
 
-        private static bool isExpired;
+        private static bool isExpired = false;
         private static Action callback;
 
         public static void Reset(float newTime = 60)
         {
             timeToWait = newTime;
             isExpired = false;
-            //TODO reset the callbacks?
-            //TODO check if timer continious when game paused
         }
 
         public static void AddListener(Action listener)
@@ -32,16 +24,20 @@ namespace MatchThreeGameForest.GameLogic
 
         public static void Tick(GameTime gameTime)
         {
-            if (!isExpired)
+            if (isExpired)
             {
-                timeToWait -= gameTime.ElapsedGameTime.TotalSeconds;
+                return;
             }
 
-            if (timeToWait > 0)
-                return;
+            timeToWait -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            timeToWait = 0;
-            callback?.Invoke();
+            timeToWait = MathF.Max(0F, timeToWait);
+
+            if (timeToWait == 0F)
+            {
+                isExpired = true;
+                callback?.Invoke();
+            }
         }
     }
 }

@@ -5,7 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.GameLogic
 {
@@ -13,7 +16,7 @@ namespace MatchThreeGameForest.GameLogic
     {
         public static Grid instance;
 
-        public Cell[,] cells = new Cell[8, 8];
+        public Cell[,] cells = new Cell[GridSize, GridSize];
         public Cell currentCell;
         public Cell selectedCell;
 
@@ -22,10 +25,7 @@ namespace MatchThreeGameForest.GameLogic
         private Random random = new Random();
         private Array shapes = Enum.GetValues(typeof(ShapeType));
 
-        public static Point Location
-        {
-            get { return new Point(10, 10); }
-        }
+        public static Point Location => new Point(10, 10);
 
         public static Point CellSize { get; private set; }
         public bool IsAnimating { get; private set; }
@@ -158,6 +158,7 @@ namespace MatchThreeGameForest.GameLogic
                     }
                     if (stop || j == cells.GetLength(1) - 1)
                     {
+                        Debug.WriteLine("Match clear and add");
                         if (match.Count >= 3)
                         {
                             if (selectedCell != null)

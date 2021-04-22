@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using System;
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.Gui
 {
@@ -53,11 +54,9 @@ namespace MatchThreeGameForest.Gui
         }
         public override void Draw(GameTime gameTime)
         {
-            var color = Color.White;
-            if (IsHighlighted)
-                color = Color.LightBlue;
-            if (IsClicked)
-                color = Color.DodgerBlue;
+            var color = (IsHighlighted) ? ButtonColorHighlighted :
+                        (IsClicked) ? ButtonColorClicked :
+                                      ButtonColor;
             Game.spriteBatch.Begin();
             Game.spriteBatch.Draw(texture, Rectangle, color);
             Game.spriteBatch.End();

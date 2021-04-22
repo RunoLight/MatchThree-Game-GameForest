@@ -24,7 +24,7 @@ namespace MatchThreeGameForest.GameLogic
         private Vector2 location;
         private Point size;
         private Vector2 moveDestination;
-        private Texture2D texture;
+        private readonly Texture2D texture;
         private float opacity;
         private int speed;
 

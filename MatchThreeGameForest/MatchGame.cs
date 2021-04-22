@@ -10,6 +10,9 @@ namespace MatchThreeGameForest
     {
         public static MatchGame instance;
 
+        /**
+         * Devices to draw on the screen
+         */
         public GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
 
@@ -18,8 +21,12 @@ namespace MatchThreeGameForest
         public MatchGame()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = Constants.ResourcesRoot;
+
             IsMouseVisible = true;
+            Window.AllowUserResizing = false;
+            Window.Title = "GameForest Test task";
+
 
             instance = this;
         }
