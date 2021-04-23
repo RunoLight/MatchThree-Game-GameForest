@@ -1,6 +1,7 @@
 ﻿using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.GameLogic
 {
@@ -24,7 +25,7 @@ namespace MatchThreeGameForest.GameLogic
         internal bool Update(GameTime gameTime)
         {
             bool isNewBlockReached = SetPosition() &&
-                Position.Y < 8 && Position.Y >= 0 && Position.X >= 0 && Position.X < 8;
+                Position.Y < GridSize && Position.Y >= 0 && Position.X >= 0 && Position.X < GridSize;
             float speed = (float)(300f * gameTime.ElapsedGameTime.TotalSeconds);
             switch (Direction)
             {
@@ -78,7 +79,7 @@ namespace MatchThreeGameForest.GameLogic
         private void MoveDown(float dist)
         {
             location.Y += dist;
-            float end = Grid.Location.Y + Grid.CellSize.Y * 8;
+            float end = Grid.Location.Y + Grid.CellSize.Y * GridSize;
             if (location.Y >= end)
             {
                 location.Y = end;
@@ -100,7 +101,7 @@ namespace MatchThreeGameForest.GameLogic
         private void MoveRight(float dist)
         {
             location.X += dist;
-            float end = Grid.Location.X + Grid.CellSize.X * 8;
+            float end = Grid.Location.X + Grid.CellSize.X * GridSize;
             if (location.X >= end)
             {
                 location.X = end;

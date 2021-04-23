@@ -25,7 +25,7 @@ namespace MatchThreeGameForest.GameLogic
         private Random random = new Random();
         private Array shapes = Enum.GetValues(typeof(ShapeType));
 
-        public static Point Location => new Point(10, 10);
+        public static Point Location => GridOffset;
 
         public static Point CellSize { get; private set; }
         public bool IsAnimating { get; private set; }
@@ -43,8 +43,7 @@ namespace MatchThreeGameForest.GameLogic
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
-                    Cell cell = new Cell(i, j);
-                    cells[i, j] = cell;
+                    cells[i, j] = new Cell(i, j);
                 }
             }
         }
@@ -139,12 +138,12 @@ namespace MatchThreeGameForest.GameLogic
         internal int MatchAndGetPoints()
         {
             int score = 0;
-            List<Cell> toDestroy = new List<Cell>(64);
+            List<Cell> toDestroy = new List<Cell>(GridSize * GridSize);
             List<Cell> newBonuses = new List<Cell>();
 
             for (int i = 0; i < cells.GetLength(0); i++)
             {
-                List<Cell> match = new List<Cell>(8) { cells[i, 0] };
+                List<Cell> match = new List<Cell>(GridSize) { cells[i, 0] };
                 for (int j = 1; j < cells.GetLength(1); j++)
                 {
                     bool stop = false;
@@ -175,7 +174,7 @@ namespace MatchThreeGameForest.GameLogic
             }
             for (int j = 0; j < cells.GetLength(1); j++)
             {
-                List<Cell> match = new List<Cell>(8) { cells[0, j] };
+                List<Cell> match = new List<Cell>(GridSize) { cells[0, j] };
                 for (int i = 1; i < cells.GetLength(0); i++)
                 {
                     bool stop = false;
@@ -285,7 +284,7 @@ namespace MatchThreeGameForest.GameLogic
         {
             MouseState mouseState = Mouse.GetState();
 
-            Rectangle fieldRect = new Rectangle(Location.X, Location.Y, CellSize.X * 8, CellSize.Y * 8);
+            Rectangle fieldRect = new Rectangle(Location.X, Location.Y, CellSize.X * GridSize, CellSize.Y * GridSize);
 
             if (fieldRect.Contains(mouseState.Position))
             {
@@ -298,7 +297,7 @@ namespace MatchThreeGameForest.GameLogic
                 }
                 currentCell = cells[i, j];
 
-                if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released && currentCell.State == CellState.Pressed)
+                if (mouseState.LeftButton == ButtonState.Released && currentCell.State == CellState.Pressed)
                 {
                     currentCell.State = CellState.Hover;
                     if (currentCell.IsSelected)
@@ -308,7 +307,7 @@ namespace MatchThreeGameForest.GameLogic
                     else
                         SelectCurrentCell();
                 }
-                else if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                else if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     currentCell.State = CellState.Pressed;
                 }

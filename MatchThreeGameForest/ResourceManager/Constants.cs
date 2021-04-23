@@ -33,6 +33,14 @@ namespace MatchThreeGameForest.ResourceManager
         public static float GameRoundTime = 30F;
 
         public static int GridSize = 8;
+        public static Point GridOffset = new Point(10, 10);
+
+        public static float CellFadeSpeed = 4f;
+        public static float CellFallSpeed = 400f;
+
+        public static int CellSwapSpeed = 200;
+        public static int CellSwapBackSpeed = 250;
+
 
     }
 }
