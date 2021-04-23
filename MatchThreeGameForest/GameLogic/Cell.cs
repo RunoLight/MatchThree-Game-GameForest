@@ -1,6 +1,7 @@
 ﻿using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.GameLogic
 {
@@ -9,6 +10,12 @@ namespace MatchThreeGameForest.GameLogic
         Normal,
         Hover,
         Pressed
+    }
+
+    enum FadeType
+    {
+        In,
+        Out
     }
 
     class Cell
@@ -36,9 +43,9 @@ namespace MatchThreeGameForest.GameLogic
             Column = column;
 
             size = Grid.CellSize;
-            location = new Vector2((Column * size.X) + 10, (Row * size.Y) + 10);
+            location = new Vector2((Column * size.X) + GridOffset.X, (Row * size.Y) + GridOffset.Y);
 
-            Animation = AnimationType.Hiding;
+            Animation = AnimationType.Revealing;
             State = CellState.Normal;
             Bonus = Bonus.None;
             IsSelected = false;
@@ -52,13 +59,14 @@ namespace MatchThreeGameForest.GameLogic
             {
                 return false;
             }
+
             switch (Animation)
             {
                 case AnimationType.Hiding:
-                    FadeIn(gameTime);
+                    Fade(FadeType.In, gameTime);
                     break;
                 case AnimationType.Revealing:
-                    FadeOut(gameTime);
+                    Fade(FadeType.Out, gameTime);
                     break;
                 case AnimationType.Falling:
                     Fall(gameTime);
@@ -70,30 +78,40 @@ namespace MatchThreeGameForest.GameLogic
             return true;
         }
 
-        private void FadeIn(GameTime gameTime)
+        private void Fade(FadeType type, GameTime gameTime)
         {
-            opacity += (float)(2f * gameTime.ElapsedGameTime.TotalSeconds);
-            if (opacity >= 1f)
-            {
-                opacity = 1f;
-                Animation = AnimationType.None;
-            }
-        }
+            float fadeDelta = CellFadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        private void FadeOut(GameTime gameTime)
-        {
-            opacity -= (float)(2f * gameTime.ElapsedGameTime.TotalSeconds);
-            if (opacity <= 0f)
+            if (type == FadeType.Out)
             {
-                Shape = ShapeType.Empty;
-                opacity = 1f;
+                //fadeDelta = fadeDelta * -1;
+                opacity -= fadeDelta;
+            }
+            else
+            {
+                opacity += fadeDelta;
+            }
+
+            opacity += fadeDelta;
+
+            //opacity = MathHelper.Lerp(opacity, (type == FadeType.Out) ? 0 : 1, 0.7f);
+
+
+            if (opacity >= 1f || opacity <= 0f)
+            {
+                opacity = MathHelper.Clamp(opacity, 0f, 1f);
                 Animation = AnimationType.None;
+
+                if (type == FadeType.Out)
+                {
+                    Shape = ShapeType.Empty;
+                }
             }
         }
 
         private void Fall(GameTime gameTime)
         {
-            location.Y += (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
+            location.Y += CellFallSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (location.Y >= moveDestination.Y)
             {
                 location.Y = moveDestination.Y;
@@ -242,7 +260,7 @@ namespace MatchThreeGameForest.GameLogic
         public bool IsCloseTo(Cell cell)
         {
             return (Column == cell.Column && (Row == cell.Row - 1 || Row == cell.Row + 1)) ||
-                (Row == cell.Row && (Column == cell.Column - 1 || Column == cell.Column + 1)) ? true : false;
+                (Row == cell.Row && (Column == cell.Column - 1 || Column == cell.Column + 1));
         }
 
         internal void SwitchSelection()
@@ -250,34 +268,34 @@ namespace MatchThreeGameForest.GameLogic
             IsSelected = !IsSelected;
         }
 
-        internal void SwapWith(Cell cell, bool unswap)
+        internal void SwapWith(Cell other, bool swapBack)
         {
-            int swapSpeed = unswap ? 250 : 180;
+            int swapSpeed = swapBack ? CellSwapBackSpeed : CellSwapSpeed;
 
             State = CellState.Normal;
-            cell.State = CellState.Normal;
+            other.State = CellState.Normal;
 
             Vector2 tempLocation = location;
-            location = cell.location;
-            cell.location = tempLocation;
+            location = other.location;
+            other.location = tempLocation;
 
-            cell.moveDestination = location;
-            moveDestination = cell.location;
+            other.moveDestination = location;
+            moveDestination = other.location;
 
             ShapeType tempShape = Shape;
-            Shape = cell.Shape;
-            cell.Shape = tempShape;
+            Shape = other.Shape;
+            other.Shape = tempShape;
 
             Bonus tempBonus = Bonus;
-            Bonus = cell.Bonus;
-            cell.Bonus = tempBonus;
+            Bonus = other.Bonus;
+            other.Bonus = tempBonus;
 
-            speed = swapSpeed;
-            cell.speed = swapSpeed;
-            opacity = 0.5f;
-            cell.opacity = 0.5f;
+            speed = other.speed = swapSpeed;
+
+            opacity = other.opacity = 0.5f;
+
             Animation = AnimationType.Swapping;
-            cell.Animation = AnimationType.Swapping;
+            other.Animation = AnimationType.Swapping;
         }
 
     }
