@@ -47,5 +47,6 @@ namespace MatchThreeGameForest.ResourceManager
         public static float OPACITY_LERP_SPEED = 4.5f;
         public static float MOVING_LERP_SPEED = 8f;
         public static float MOVING_BACK_MULT = 2f;
+        public static float MOVING_ROW_MULT = 0.8f;
     }
 }
