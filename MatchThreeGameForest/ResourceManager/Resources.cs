@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using static MatchThreeGameForest.ResourceManager.Constants;
@@ -39,8 +38,6 @@ namespace MatchThreeGameForest.ResourceManager
             Destroyer = content.Load<Texture2D>(PathDestroyer);
 
             elementsDict.Add(ShapeType.Empty, Enumerable.Repeat(content.Load<Texture2D>(PathBlankCell), 4).ToArray());
-
-            Debug.WriteLine($"Elements dicd size:{elementsDict.Count}");
 
             MemberInfo[] memberInfos = typeof(ShapeType).GetMembers(BindingFlags.Public | BindingFlags.Static);
             for (int i = 1; i < memberInfos.Length; i++)
