@@ -32,6 +32,7 @@ namespace MatchThreeGameForest.GameLogic
         public bool IsSelected { get; private set; }
         public int Row { get; private set; }
         public int Column { get; private set; }
+
         public ShapeType Shape;
         public Bonus Bonus;
         public CellState State { get; set; }
@@ -228,7 +229,7 @@ namespace MatchThreeGameForest.GameLogic
             State = other.State = CellState.Normal;
             Animation = other.Animation = AnimationType.Swapping;
             speed = other.speed = swapSpeed;
-            opacity = other.opacity = 0.5f;
+            opacity = other.opacity = CELL_SWAP_OPACITY;
         }
 
     }

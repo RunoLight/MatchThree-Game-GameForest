@@ -8,15 +8,15 @@ namespace MatchThreeGameForest.GameLogic
     class Destroyer
     {
         private Vector2 location;
-        private Texture2D texture = Resources.Destroyer;
+        private readonly Texture2D texture = Resources.Destroyer;
         private double timer;
         public Direction Direction { get; private set; }
         public Point Position { get; private set; }
         public bool toRemove { get; private set; }
 
-        public Destroyer(Vector2 location, Direction direction)
+        public Destroyer(Vector2 _location, Direction direction)
         {
-            this.location = location;
+            location = _location;
             Direction = direction;
             toRemove = false;
             Position = new Point(-1, -1);
@@ -25,8 +25,9 @@ namespace MatchThreeGameForest.GameLogic
         internal bool Update(GameTime gameTime)
         {
             bool isNewBlockReached = SetPosition() &&
-                Position.Y < GridSize && Position.Y >= 0 && Position.X >= 0 && Position.X < GridSize;
-            float speed = (float)(300f * gameTime.ElapsedGameTime.TotalSeconds);
+                Position.Y < GridSize && Position.Y >= 0 &&
+                Position.X < GridSize && Position.X >= 0;
+            float speed = DESTROYER_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
             switch (Direction)
             {
                 case Direction.Up:
