@@ -153,9 +153,6 @@ namespace MatchThreeGameForest.GameLogic
             {
                 switch (State)
                 {
-                    //case CellState.Normal:
-                    //    spriteBatch.Draw(texture, rectangle, CellColor);
-                    //    break;
                     case CellState.Hover:
                         spriteBatch.Draw(texture, rectangle, CellHoverColor);
                         break;

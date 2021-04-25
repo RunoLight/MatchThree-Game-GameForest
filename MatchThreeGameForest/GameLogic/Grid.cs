@@ -118,6 +118,7 @@ namespace MatchThreeGameForest.GameLogic
                 }
             }
             spriteBatch.End();
+
             foreach (var cell in cells)
             {
                 cell.Draw(spriteBatch);
