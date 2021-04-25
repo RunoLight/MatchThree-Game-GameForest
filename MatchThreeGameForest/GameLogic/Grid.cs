@@ -105,6 +105,19 @@ namespace MatchThreeGameForest.GameLogic
 
         internal void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Begin();
+            // Grid background
+            var texture = Resources.Cell;
+            for (int i = 0; i < GridSize; i++)
+            {
+                for (int j = 0; j < GridSize; j++)
+                {
+                    var location = new Point((i * Grid.CellSize.X) + GridOffset.X, (j * Grid.CellSize.Y) + GridOffset.Y);
+                    Rectangle rectangle = new Rectangle(location, Grid.CellSize);
+                    spriteBatch.Draw(texture, rectangle, CellColor);
+                }
+            }
+            spriteBatch.End();
             foreach (var cell in cells)
             {
                 cell.Draw(spriteBatch);
@@ -157,7 +170,8 @@ namespace MatchThreeGameForest.GameLogic
                     }
                     if (stop || j == cells.GetLength(1) - 1)
                     {
-                        Debug.WriteLine("Match clear and add");
+                        Debug.Assert(true);
+                        //Debug.WriteLine("Match clear and add");
                         if (match.Count >= 3)
                         {
                             if (selectedCell != null)

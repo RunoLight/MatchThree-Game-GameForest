@@ -27,7 +27,7 @@ namespace MatchThreeGameForest.ResourceManager
         public static Color ButtonColorClicked = Color.DodgerBlue;
 
         public static float MenuTransitionTime = 0.5F;
-        public static String LoadingScreenMessage = "Oh, hi there!";
+        public static String LoadingScreenMessage = "Did you know? Unity is good engine too";
         public static Color TextColor = Color.Black;
 
         public static float GameRoundTime = 30F;
@@ -40,6 +40,15 @@ namespace MatchThreeGameForest.ResourceManager
 
         public static int CellSwapSpeed = 200;
         public static int CellSwapBackSpeed = 250;
+
+        public static Color CellColor = Color.White;
+        public static Color CellHoverColor = Color.Chocolate;
+        public static Color CellPressedColor = Color.Orange;
+        public static Color CellSelectedColor = Color.Red;
+
+        public static float DISTANCE_TOLERANCE = 0.5f;
+        public static float OPACITY_LERP_SPEED = 4.5f;
+        public static float MOVING_LERP_SPEED = 10f;
 
 
     }

@@ -1,6 +1,7 @@
 ﻿using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.GameLogic
@@ -16,6 +17,12 @@ namespace MatchThreeGameForest.GameLogic
     {
         In,
         Out
+    }
+
+    enum MoveType
+    {
+        Vertical,
+        Horizontal
     }
 
     class Cell
@@ -80,21 +87,7 @@ namespace MatchThreeGameForest.GameLogic
 
         private void Fade(FadeType type, GameTime gameTime)
         {
-            float fadeDelta = CellFadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (type == FadeType.Out)
-            {
-                //fadeDelta = fadeDelta * -1;
-                opacity -= fadeDelta;
-            }
-            else
-            {
-                opacity += fadeDelta;
-            }
-
-            opacity += fadeDelta;
-
-            //opacity = MathHelper.Lerp(opacity, (type == FadeType.Out) ? 0 : 1, 0.7f);
+            opacity = MathHelper.Lerp(opacity, 1.1f, OPACITY_LERP_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
 
             if (opacity >= 1f || opacity <= 0f)
@@ -111,8 +104,10 @@ namespace MatchThreeGameForest.GameLogic
 
         private void Fall(GameTime gameTime)
         {
-            location.Y += CellFallSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (location.Y >= moveDestination.Y)
+            var lerpingY = MathF.Min(moveDestination.Y, location.Y + 20f);
+            location.Y = MathHelper.Lerp(location.Y, lerpingY, MOVING_LERP_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            var distance = MathF.Abs(location.Y - moveDestination.Y);
+            if (distance <= DISTANCE_TOLERANCE)
             {
                 location.Y = moveDestination.Y;
                 Animation = AnimationType.None;
@@ -121,70 +116,33 @@ namespace MatchThreeGameForest.GameLogic
 
         private void Swap(GameTime gameTime)
         {
-            if (location.X == moveDestination.X)
+            var movingComplete = (location.X == moveDestination.X && location.Y == moveDestination.Y);
+
+            if (!movingComplete)
             {
-                if (location.Y == moveDestination.Y)
-                {
-                    Animation = AnimationType.None;
-                    opacity = 1f;
-                }
-                else
-                {
-                    MoveHorizontal(gameTime);
-                }
+                var moveType = (location.Y != moveDestination.Y) ? MoveType.Vertical : MoveType.Horizontal;
+                movingComplete = Move(ref (moveType == MoveType.Vertical ? ref location.Y : ref location.X),
+                    (moveType == MoveType.Vertical) ? moveDestination.Y : moveDestination.X, gameTime);
             }
-            else
+
+            if (movingComplete)
             {
-                MoveVertical(gameTime);
+                Animation = AnimationType.None;
+                opacity = 1f;
             }
         }
 
-        private void MoveHorizontal(GameTime gameTime)
+        // Returns true if moving is complete, false otherwise
+        private bool Move(ref float location, float destination, GameTime gameTime)
         {
-            if (location.Y < moveDestination.Y)
+            location = MathHelper.Lerp(location, destination, MOVING_LERP_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            var distance = MathF.Abs(location - destination);
+            if (distance <= DISTANCE_TOLERANCE)
             {
-                location.Y += (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
-                if (location.Y >= moveDestination.Y)
-                {
-                    location.Y = moveDestination.Y;
-                    Animation = AnimationType.None;
-                    opacity = 1f;
-                }
+                location = destination;
+                return true;
             }
-            else
-            {
-                location.Y -= (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
-                if (location.Y <= moveDestination.Y)
-                {
-                    location.Y = moveDestination.Y;
-                    Animation = AnimationType.None;
-                    opacity = 1f;
-                }
-            }
-        }
-
-        private void MoveVertical(GameTime gameTime)
-        {
-            if (location.X < moveDestination.X)
-            {
-                location.X += (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
-                if (location.X >= moveDestination.X)
-                {
-                    location.X = moveDestination.X;
-                    Animation = AnimationType.None;
-                    opacity = 1f;
-                }
-            }
-            else
-            {
-                location.X -= (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
-                if (location.X <= moveDestination.X)
-                {
-                    location.X = moveDestination.X;
-                    Animation = AnimationType.None;
-                    opacity = 1f;
-                }
-            }
+            return false;
         }
 
         internal void Draw(SpriteBatch spriteBatch)
@@ -195,19 +153,19 @@ namespace MatchThreeGameForest.GameLogic
             {
                 switch (State)
                 {
-                    case CellState.Normal:
-                        spriteBatch.Draw(texture, rectangle, Color.White);
-                        break;
+                    //case CellState.Normal:
+                    //    spriteBatch.Draw(texture, rectangle, CellColor);
+                    //    break;
                     case CellState.Hover:
-                        spriteBatch.Draw(texture, rectangle, Color.Chocolate);
+                        spriteBatch.Draw(texture, rectangle, CellHoverColor);
                         break;
                     case CellState.Pressed:
-                        spriteBatch.Draw(texture, rectangle, Color.White);
+                        spriteBatch.Draw(texture, rectangle, CellPressedColor);
                         break;
                 }
                 if (IsSelected)
                 {
-                    spriteBatch.Draw(texture, rectangle, Color.Red);
+                    spriteBatch.Draw(texture, rectangle, CellSelectedColor);
                 }
             }
 
@@ -290,9 +248,11 @@ namespace MatchThreeGameForest.GameLogic
             Bonus = other.Bonus;
             other.Bonus = tempBonus;
 
-            speed = other.speed = swapSpeed;
+            other.speed = swapSpeed;
+            speed = swapSpeed;
 
-            opacity = other.opacity = 0.5f;
+            opacity = 0.5f;
+            other.opacity = 0.5f;
 
             Animation = AnimationType.Swapping;
             other.Animation = AnimationType.Swapping;
