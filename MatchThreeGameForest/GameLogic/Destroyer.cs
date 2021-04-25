@@ -97,7 +97,7 @@ namespace MatchThreeGameForest.GameLogic
         private void Detonate(double elapsedMilliseconds)
         {
             timer += elapsedMilliseconds;
-            toRemove = (timer >= 250f);
+            toRemove = timer >= 250f;
         }
 
         internal void Draw(SpriteBatch spriteBatch)
