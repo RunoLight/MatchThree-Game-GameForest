@@ -36,20 +36,18 @@ namespace MatchThreeGameForest.GameLogic
         public CellState State { get; set; }
 
         private Vector2 location;
-        private Point size;
+        private Point size = Grid.CellSize;
         private Vector2 moveDestination;
-        private readonly Texture2D texture;
+        private readonly Texture2D texture = Resources.Cell;
         private float opacity;
-        private int speed;
+        private float speed = MOVING_LERP_SPEED;
 
         public Cell(int row, int column)
         {
             Shape = ShapeType.Empty;
-            texture = Resources.Cell;
             Row = row;
             Column = column;
 
-            size = Grid.CellSize;
             location = new Vector2((Column * size.X) + GridOffset.X, (Row * size.Y) + GridOffset.Y);
 
             Animation = AnimationType.Revealing;
@@ -105,7 +103,7 @@ namespace MatchThreeGameForest.GameLogic
         private void Fall(GameTime gameTime)
         {
             var lerpingY = MathF.Min(moveDestination.Y, location.Y + 20f);
-            location.Y = MathHelper.Lerp(location.Y, lerpingY, MOVING_LERP_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            location.Y = MathHelper.Lerp(location.Y, lerpingY, speed * (float)gameTime.ElapsedGameTime.TotalSeconds);
             var distance = MathF.Abs(location.Y - moveDestination.Y);
             if (distance <= DISTANCE_TOLERANCE)
             {
@@ -135,7 +133,7 @@ namespace MatchThreeGameForest.GameLogic
         // Returns true if moving is complete, false otherwise
         private bool Move(ref float location, float destination, GameTime gameTime)
         {
-            location = MathHelper.Lerp(location, destination, MOVING_LERP_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            location = MathHelper.Lerp(location, destination, speed * (float)gameTime.ElapsedGameTime.TotalSeconds);
             var distance = MathF.Abs(location - destination);
             if (distance <= DISTANCE_TOLERANCE)
             {
@@ -166,14 +164,10 @@ namespace MatchThreeGameForest.GameLogic
                 }
             }
 
-            spriteBatch.Draw(Resources.GetTexture(Shape, Bonus),
-                             location,
-                             null,
-                             new Color(Color.White, opacity),
-                             0,
-                             Vector2.Zero,
-                             0.5f,
-                             SpriteEffects.None,
+            spriteBatch.Draw(Resources.GetTexture(Shape, Bonus), location,
+                             null, new Color(Color.White, opacity),
+                             0, Vector2.Zero,
+                             0.5f, SpriteEffects.None,
                              0f);
             spriteBatch.End();
         }
@@ -207,7 +201,7 @@ namespace MatchThreeGameForest.GameLogic
 
             cell.moveDestination = cell.location;
             cell.location = location;
-            cell.speed = (cell.Row * 35) + 150;
+            cell.speed = (cell.Row * 0.8f) * MOVING_LERP_SPEED;
 
             cell.Animation = AnimationType.Falling;
         }
@@ -225,7 +219,7 @@ namespace MatchThreeGameForest.GameLogic
 
         internal void SwapWith(Cell other, bool swapBack)
         {
-            int swapSpeed = swapBack ? CellSwapBackSpeed : CellSwapSpeed;
+            float swapSpeed = MOVING_LERP_SPEED * (swapBack ? MOVING_BACK_MULT : 1);
 
             State = CellState.Normal;
             other.State = CellState.Normal;

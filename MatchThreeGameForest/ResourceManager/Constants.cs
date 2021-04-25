@@ -38,18 +38,14 @@ namespace MatchThreeGameForest.ResourceManager
         public static float CellFadeSpeed = 4f;
         public static float CellFallSpeed = 400f;
 
-        public static int CellSwapSpeed = 200;
-        public static int CellSwapBackSpeed = 250;
-
         public static Color CellColor = Color.White;
         public static Color CellHoverColor = Color.Chocolate;
         public static Color CellPressedColor = Color.Orange;
         public static Color CellSelectedColor = Color.Red;
 
-        public static float DISTANCE_TOLERANCE = 0.5f;
+        public static float DISTANCE_TOLERANCE = 1.5f;
         public static float OPACITY_LERP_SPEED = 4.5f;
-        public static float MOVING_LERP_SPEED = 10f;
-
-
+        public static float MOVING_LERP_SPEED = 8f;
+        public static float MOVING_BACK_MULT = 2f;
     }
 }
