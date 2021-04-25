@@ -1,4 +1,5 @@
-﻿using MatchThreeGameForest.ResourceManager;
+﻿using MatchThreeGameForest.GameLogic.Utils;
+using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -31,8 +32,8 @@ namespace MatchThreeGameForest.GameLogic
         public bool IsSelected { get; private set; }
         public int Row { get; private set; }
         public int Column { get; private set; }
-        public ShapeType Shape { get; set; }
-        public Bonus Bonus { get; set; }
+        public ShapeType Shape;
+        public Bonus Bonus;
         public CellState State { get; set; }
 
         private Vector2 location;
@@ -221,32 +222,16 @@ namespace MatchThreeGameForest.GameLogic
         {
             float swapSpeed = MOVING_LERP_SPEED * (swapBack ? MOVING_BACK_MULT : 1);
 
-            State = CellState.Normal;
-            other.State = CellState.Normal;
-
-            Vector2 tempLocation = location;
-            location = other.location;
-            other.location = tempLocation;
-
+            Utility.Swap<Vector2>(ref location, ref other.location);
             other.moveDestination = location;
             moveDestination = other.location;
 
-            ShapeType tempShape = Shape;
-            Shape = other.Shape;
-            other.Shape = tempShape;
-
-            Bonus tempBonus = Bonus;
-            Bonus = other.Bonus;
-            other.Bonus = tempBonus;
-
-            other.speed = swapSpeed;
-            speed = swapSpeed;
-
-            opacity = 0.5f;
-            other.opacity = 0.5f;
-
-            Animation = AnimationType.Swapping;
-            other.Animation = AnimationType.Swapping;
+            Utility.Swap<Bonus>(ref Bonus, ref other.Bonus);
+            Utility.Swap<ShapeType>(ref Shape, ref other.Shape);
+            State = other.State = CellState.Normal;
+            Animation = other.Animation = AnimationType.Swapping;
+            speed = other.speed = swapSpeed;
+            opacity = other.opacity = 0.5f;
         }
 
     }
