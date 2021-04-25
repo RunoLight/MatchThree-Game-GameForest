@@ -165,11 +165,8 @@ namespace MatchThreeGameForest.GameLogic
                 }
             }
 
-            spriteBatch.Draw(Resources.GetTexture(Shape, Bonus), location,
-                             null, new Color(Color.White, opacity),
-                             0, Vector2.Zero,
-                             0.5f, SpriteEffects.None,
-                             0f);
+            spriteBatch.Draw(Resources.GetTexture(Shape, Bonus), location, null, new Color(Color.White, opacity),
+                             0, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
             spriteBatch.End();
         }
 
@@ -192,19 +189,19 @@ namespace MatchThreeGameForest.GameLogic
             Animation = AnimationType.Hiding;
         }
 
-        internal void FallInto(Cell cell)
+        internal void FallInto(Cell other)
         {
-            cell.State = CellState.Normal;
-            cell.Shape = Shape;
+            other.State = CellState.Normal;
+            other.Shape = Shape;
             Shape = ShapeType.Empty;
-            cell.Bonus = Bonus;
+            other.Bonus = Bonus;
             Bonus = Bonus.None;
 
-            cell.moveDestination = cell.location;
-            cell.location = location;
-            cell.speed = (cell.Row * 0.8f) * MOVING_LERP_SPEED;
+            other.moveDestination = other.location;
+            other.location = location;
+            other.speed = (other.Row * MOVING_ROW_MULT) * MOVING_LERP_SPEED;
 
-            cell.Animation = AnimationType.Falling;
+            other.Animation = AnimationType.Falling;
         }
 
         public bool IsCloseTo(Cell cell)
