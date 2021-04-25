@@ -45,23 +45,17 @@ namespace MatchThreeGameForest.GameLogic
             {
                 case Direction.Up:
                     Move(MoveType.Up, speed);
-
                     break;
                 case Direction.Down:
                     Move(MoveType.Down, speed);
-
                     break;
                 case Direction.Left:
                     Move(MoveType.Left, speed);
-
                     break;
                 case Direction.Right:
                     Move(MoveType.Right, speed);
-
                     break;
                 case Direction.Detonate:
-                    Detonate(gameTime.ElapsedGameTime.TotalMilliseconds);
-                    break;
                 case Direction.SecondDetonate:
                     Detonate(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
@@ -74,121 +68,36 @@ namespace MatchThreeGameForest.GameLogic
         {
             int i = (int)((location.Y - Grid.Location.Y) / Grid.CellSize.Y);
             int j = (int)((location.X - Grid.Location.X) / Grid.CellSize.X);
+            bool positionChanged = Position.X != j || Position.Y != i;
             Position = new Point(i, j);
-            return (Position.X != j || Position.Y != i);
-        }
-
-        private void MoveUp(float distance)
-        {
-            location.Y -= distance;
-            float end = Grid.Location.Y - Grid.CellSize.Y;
-            if (location.Y <= end)
-            {
-                location.Y = end;
-            }
-        }
-        private void MoveDown(float dist)
-        {
-            location.Y += dist;
-            float end = Grid.Location.Y + Grid.CellSize.Y * GridSize;
-            if (location.Y >= end)
-            {
-                location.Y = end;
-            }
-        }
-        private void MoveLeft(float dist)
-        {
-            location.X -= dist;
-            float end = Grid.Location.X - Grid.CellSize.X;
-            if (location.X <= end)
-            {
-                location.X = end;
-            }
-        }
-        private void MoveRight(float dist)
-        {
-            location.X += dist;
-            float end = Grid.Location.X + Grid.CellSize.X * GridSize;
-            if (location.X >= end)
-            {
-                location.X = end;
-            }
+            return positionChanged;
         }
 
         private void Move(MoveType type, float distance)
         {
-            float end = 0; ;
-            bool ended = false;
-
             ref float transform = ref (((type & MoveType.Horizontal) > 0) ? ref location.X : ref location.Y);
-
             transform += distance * (((type & MoveType.FarCorner) > 0) ? 1 : -1);
 
+            float gridOffset = ((type & MoveType.Horizontal) > 0) ? Grid.Location.X : Grid.Location.Y;
+            float cellsToCorner = ((type & MoveType.FarCorner) > 0) ? GridSize : -1;
+            float cellSize = ((type & MoveType.Horizontal) > 0) ? Grid.CellSize.X : Grid.CellSize.Y;
 
+            float trasformDestination = gridOffset + cellSize * cellsToCorner;
 
-            switch (type)
-            {
-                case MoveType.Up:
-                    end = Grid.Location.Y - Grid.CellSize.Y;
-                    break;
-                case MoveType.Down:
-                    end = Grid.Location.Y + Grid.CellSize.Y * GridSize;
-                    break;
-                case MoveType.Left:
-                    end = Grid.Location.X - Grid.CellSize.X;
-                    break;
-                case MoveType.Right:
-                    end = Grid.Location.X + Grid.CellSize.X * GridSize;
-                    break;
-            }
+            bool isComplete = (((type & MoveType.FarCorner) > 0) && transform >= trasformDestination) ||
+                    (((type & MoveType.FarCorner) == 0) && transform <= trasformDestination);
 
-
-            ended = (((type & MoveType.FarCorner) > 0) && transform >= end) ||
-                    (((type & MoveType.FarCorner) == 0) && transform <= end);
-
-            if (ended)
+            if (isComplete)
             {
                 toRemove = true;
-
-                transform = end;
+                transform = trasformDestination;
             }
-
-
-
-            // type == MoveType.Down || type == MoveType.Up
-            // type == MoveType.Down || type == MoveType.Up
-            // 
-            // type == MoveType.Right || type == MoveType.Down
-            // type == MoveType.Right || type == MoveType.Down
-            // -----------------------------------
-            //ref float transform = ref ((type == MoveType.Down || type == MoveType.Up) ? ref location.Y : ref location.X);
-            //float deltaDistance = distance * ((type == MoveType.Right || type == MoveType.Down) ? 1 : -1);
-
-            //transform += deltaDistance;
-
-            //float gridOffset = (type == MoveType.Down || type == MoveType.Up) ? Grid.Location.Y : Grid.Location.X;
-            //float cellSize = ((type == MoveType.Down || type == MoveType.Up) ? Grid.CellSize.Y : Grid.CellSize.X) * ((type == MoveType.Right || type == MoveType.Down) ? 1 : -1);
-            //float cellAmount = (type == MoveType.Right || type == MoveType.Down) ? GridSize : 1;
-
-            //float destination = gridOffset + cellSize * cellAmount;
-
-            //if ((transform >= destination && type == MoveType.Right || type == MoveType.Down) ||
-            //    (transform <= destination && type != MoveType.FarCorner))
-            //{
-            //    transform = destination;
-            //    toRemove = true;
-            //}
         }
-
-
 
         private void Detonate(double elapsedMilliseconds)
         {
             timer += elapsedMilliseconds;
-            if (timer >= 250f)
-            {
-                toRemove = true;
-            }
+            toRemove = (timer >= 250f);
         }
 
         internal void Draw(SpriteBatch spriteBatch)
