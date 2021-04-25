@@ -30,7 +30,7 @@ namespace MatchThreeGameForest.ResourceManager
         public static String LoadingScreenMessage = "Did you know? Unity is good engine too";
         public static Color TextColor = Color.Black;
 
-        public static float GameRoundTime = 30F;
+        public static float GameRoundTime = 80F;
 
         public static int GridSize = 8;
         public static Point GridOffset = new Point(10, 10);

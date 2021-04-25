@@ -1,12 +1,25 @@
 ﻿using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using static MatchThreeGameForest.ResourceManager.Constants;
 
 namespace MatchThreeGameForest.GameLogic
 {
     class Destroyer
     {
+        [Flags]
+        enum MoveType
+        {
+            Up = 1,
+            Down = 2,
+            Left = 4,
+            Right = 8,
+            Vertical = Up | Down,
+            Horizontal = Left | Right,
+            FarCorner = Right | Down
+        }
+
         private Vector2 location;
         private readonly Texture2D texture = Resources.Destroyer;
         private double timer;
@@ -24,23 +37,27 @@ namespace MatchThreeGameForest.GameLogic
 
         internal bool Update(GameTime gameTime)
         {
-            bool isNewBlockReached = SetPosition() &&
+            bool isNewBlockReached = UpdatePosition() &&
                 Position.Y < GridSize && Position.Y >= 0 &&
                 Position.X < GridSize && Position.X >= 0;
             float speed = DESTROYER_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
             switch (Direction)
             {
                 case Direction.Up:
-                    MoveUp(speed);
+                    Move(MoveType.Up, speed);
+
                     break;
                 case Direction.Down:
-                    MoveDown(speed);
+                    Move(MoveType.Down, speed);
+
                     break;
                 case Direction.Left:
-                    MoveLeft(speed);
+                    Move(MoveType.Left, speed);
+
                     break;
                 case Direction.Right:
-                    MoveRight(speed);
+                    Move(MoveType.Right, speed);
+
                     break;
                 case Direction.Detonate:
                     Detonate(gameTime.ElapsedGameTime.TotalMilliseconds);
@@ -52,31 +69,24 @@ namespace MatchThreeGameForest.GameLogic
             return isNewBlockReached;
         }
 
-        private bool SetPosition()
+        // Returns true if position is changed
+        private bool UpdatePosition()
         {
-            bool r = false;
             int i = (int)((location.Y - Grid.Location.Y) / Grid.CellSize.Y);
             int j = (int)((location.X - Grid.Location.X) / Grid.CellSize.X);
-
-            if (Position.X != j || Position.Y != i)
-            {
-                r = true;
-            }
             Position = new Point(i, j);
-            return r;
+            return (Position.X != j || Position.Y != i);
         }
 
-        private void MoveUp(float dist)
+        private void MoveUp(float distance)
         {
-            location.Y -= dist;
+            location.Y -= distance;
             float end = Grid.Location.Y - Grid.CellSize.Y;
             if (location.Y <= end)
             {
                 location.Y = end;
-                toRemove = true;
             }
         }
-
         private void MoveDown(float dist)
         {
             location.Y += dist;
@@ -84,10 +94,8 @@ namespace MatchThreeGameForest.GameLogic
             if (location.Y >= end)
             {
                 location.Y = end;
-                toRemove = true;
             }
         }
-
         private void MoveLeft(float dist)
         {
             location.X -= dist;
@@ -95,10 +103,8 @@ namespace MatchThreeGameForest.GameLogic
             if (location.X <= end)
             {
                 location.X = end;
-                toRemove = true;
             }
         }
-
         private void MoveRight(float dist)
         {
             location.X += dist;
@@ -106,9 +112,75 @@ namespace MatchThreeGameForest.GameLogic
             if (location.X >= end)
             {
                 location.X = end;
-                toRemove = true;
             }
         }
+
+        private void Move(MoveType type, float distance)
+        {
+            float end = 0; ;
+            bool ended = false;
+
+            ref float transform = ref (((type & MoveType.Horizontal) > 0) ? ref location.X : ref location.Y);
+
+            transform += distance * (((type & MoveType.FarCorner) > 0) ? 1 : -1);
+
+
+
+            switch (type)
+            {
+                case MoveType.Up:
+                    end = Grid.Location.Y - Grid.CellSize.Y;
+                    break;
+                case MoveType.Down:
+                    end = Grid.Location.Y + Grid.CellSize.Y * GridSize;
+                    break;
+                case MoveType.Left:
+                    end = Grid.Location.X - Grid.CellSize.X;
+                    break;
+                case MoveType.Right:
+                    end = Grid.Location.X + Grid.CellSize.X * GridSize;
+                    break;
+            }
+
+
+            ended = (((type & MoveType.FarCorner) > 0) && transform >= end) ||
+                    (((type & MoveType.FarCorner) == 0) && transform <= end);
+
+            if (ended)
+            {
+                toRemove = true;
+
+                transform = end;
+            }
+
+
+
+            // type == MoveType.Down || type == MoveType.Up
+            // type == MoveType.Down || type == MoveType.Up
+            // 
+            // type == MoveType.Right || type == MoveType.Down
+            // type == MoveType.Right || type == MoveType.Down
+            // -----------------------------------
+            //ref float transform = ref ((type == MoveType.Down || type == MoveType.Up) ? ref location.Y : ref location.X);
+            //float deltaDistance = distance * ((type == MoveType.Right || type == MoveType.Down) ? 1 : -1);
+
+            //transform += deltaDistance;
+
+            //float gridOffset = (type == MoveType.Down || type == MoveType.Up) ? Grid.Location.Y : Grid.Location.X;
+            //float cellSize = ((type == MoveType.Down || type == MoveType.Up) ? Grid.CellSize.Y : Grid.CellSize.X) * ((type == MoveType.Right || type == MoveType.Down) ? 1 : -1);
+            //float cellAmount = (type == MoveType.Right || type == MoveType.Down) ? GridSize : 1;
+
+            //float destination = gridOffset + cellSize * cellAmount;
+
+            //if ((transform >= destination && type == MoveType.Right || type == MoveType.Down) ||
+            //    (transform <= destination && type != MoveType.FarCorner))
+            //{
+            //    transform = destination;
+            //    toRemove = true;
+            //}
+        }
+
+
 
         private void Detonate(double elapsedMilliseconds)
         {
