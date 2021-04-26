@@ -20,6 +20,16 @@ namespace MatchThreeGameForest.GameLogic
             FarCorner = Right | Down
         }
 
+        private bool IsHorizontal(MoveType type)
+        {
+            return (type & MoveType.Horizontal) > 0;
+        }
+
+        private bool IsFarCorner(MoveType type)
+        {
+            return (type & MoveType.FarCorner) > 0;
+        }
+
         private Vector2 location;
         private readonly Texture2D texture = Resources.Destroyer;
         private double timer;
@@ -75,17 +85,18 @@ namespace MatchThreeGameForest.GameLogic
 
         private void Move(MoveType type, float distance)
         {
-            ref float transform = ref (((type & MoveType.Horizontal) > 0) ? ref location.X : ref location.Y);
+            ref float transform = ref ((IsHorizontal(type)) ? ref location.X : ref location.Y);
             transform += distance * (((type & MoveType.FarCorner) > 0) ? 1 : -1);
 
-            float gridOffset = ((type & MoveType.Horizontal) > 0) ? Grid.Location.X : Grid.Location.Y;
-            float cellsToCorner = ((type & MoveType.FarCorner) > 0) ? GridSize : -1;
-            float cellSize = ((type & MoveType.Horizontal) > 0) ? Grid.CellSize.X : Grid.CellSize.Y;
+            float gridOffset = (IsHorizontal(type)) ? Grid.Location.X : Grid.Location.Y;
+            float cellsToCorner = (IsFarCorner(type)) ? GridSize - 1 : 0;
+            float cellSize = (IsHorizontal(type)) ? Grid.CellSize.X : Grid.CellSize.Y;
 
             float trasformDestination = gridOffset + cellSize * cellsToCorner;
+            trasformDestination += cellSize * 0.15f * (IsFarCorner(type) ? 1 : -1);
 
-            bool isComplete = (((type & MoveType.FarCorner) > 0) && transform >= trasformDestination) ||
-                    (((type & MoveType.FarCorner) == 0) && transform <= trasformDestination);
+            bool isComplete = (IsFarCorner(type) && transform >= trasformDestination) ||
+                    (!IsFarCorner(type) && transform <= trasformDestination);
 
             if (isComplete)
             {
