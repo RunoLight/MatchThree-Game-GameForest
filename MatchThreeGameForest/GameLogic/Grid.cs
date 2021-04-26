@@ -1,4 +1,5 @@
-﻿using MatchThreeGameForest.ResourceManager;
+﻿using MatchThreeGameForest.GameLogic.Utils;
+using MatchThreeGameForest.ResourceManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -54,10 +55,7 @@ namespace MatchThreeGameForest.GameLogic
 
             foreach (var cell in cells)
             {
-                if (cell.Animation != AnimationType.None)
-                {
-                    IsAnimating = true;
-                }
+                IsAnimating = IsAnimating || (cell.Animation != AnimationType.None);
                 cell.Update(gameTime);
             }
 
@@ -92,10 +90,12 @@ namespace MatchThreeGameForest.GameLogic
                 {
                     for (int j = item.Position.Y - 1; j <= item.Position.Y + 1; j++)
                     {
-                        if (i == item.Position.X && j == item.Position.Y)
+                        if (item.Position == new Point(i, j) ||
+                            !Utility.InBounds(i, j))
                         {
                             continue;
                         }
+
                         destroyerList.Add(new Destroyer(new Vector2(j * CellSize.X + Location.X, i * CellSize.Y + Location.Y),
                             Direction.SecondDetonate));
                     }
