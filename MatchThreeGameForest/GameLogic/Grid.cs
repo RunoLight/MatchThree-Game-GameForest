@@ -77,7 +77,7 @@ namespace MatchThreeGameForest.GameLogic
             FarDestroyers(detonated);
             destroyerList.RemoveAll(d => d.toRemove);
             int scoreFromDestroyers = toDestroy.Count(c => cells[c.X, c.Y].Animation == AnimationType.None);
-            scoreFromDestroyers = scoreFromDestroyers * 10;
+            scoreFromDestroyers *= 10;
             GameScore.Add(scoreFromDestroyers);
             toDestroy.ForEach(point => cells[point.X, point.Y].Destroy());
         }
@@ -142,7 +142,7 @@ namespace MatchThreeGameForest.GameLogic
                         gridChanged = true;
                         ShapeType shape = (ShapeType)shapes.GetValue(random.Next(shapes.Length - 1) + 1);
                         cells[i, j].Spawn(shape);
-                        cells[i, j].Bonus = Bonus.None;
+                        //cells[i, j].Bonus = Bonus.None;
                     }
                 }
             }
@@ -172,16 +172,22 @@ namespace MatchThreeGameForest.GameLogic
                     if (stop || j == cells.GetLength(1) - 1)
                     {
                         Debug.Assert(true);
-                        //Debug.WriteLine("Match clear and add");
+
                         if (match.Count >= 3)
                         {
-                            if (selectedCell != null)
+                            if (selectedCell != null && match.Count > 3)
                             {
                                 newBonuses.Add(SpawnBonus(match, Bonus.LineHorizontal));
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Match good BUT selected == null");
+
                             }
                             toDestroy.AddRange(match);
                             score += match.Count * 10;
                         }
+                        //toDestroy.AddRange(match);
                         match.Clear();
                         match.Add(cells[i, j]);
                     }
@@ -205,7 +211,7 @@ namespace MatchThreeGameForest.GameLogic
                     {
                         if (match.Count >= 3)
                         {
-                            if (selectedCell != null)
+                            if (selectedCell != null && match.Count > 3)
                             {
                                 newBonuses.Add(SpawnBonus(match, Bonus.LineVertical));
                             }
