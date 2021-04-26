@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 using static MatchThreeGameForest.ResourceManager.Constants;
@@ -142,7 +141,6 @@ namespace MatchThreeGameForest.GameLogic
                         gridChanged = true;
                         ShapeType shape = (ShapeType)shapes.GetValue(random.Next(shapes.Length - 1) + 1);
                         cells[i, j].Spawn(shape);
-                        //cells[i, j].Bonus = Bonus.None;
                     }
                 }
             }
@@ -170,8 +168,6 @@ namespace MatchThreeGameForest.GameLogic
                         stop = true;
                     }
                     if (stop || j == cells.GetLength(1) - 1)
-                    {
-                        Debug.Assert(true);
 
                         if (match.Count >= 3)
                         {
@@ -179,24 +175,18 @@ namespace MatchThreeGameForest.GameLogic
                             {
                                 newBonuses.Add(SpawnBonus(match, Bonus.LineHorizontal));
                             }
-                            else
-                            {
-                                Debug.WriteLine("Match good BUT selected == null");
-
-                            }
                             toDestroy.AddRange(match);
                             score += match.Count * 10;
                         }
-                        //toDestroy.AddRange(match);
-                        match.Clear();
-                        match.Add(cells[i, j]);
-                    }
+                    match.Clear();
+                    match.Add(cells[i, j]);
                 }
             }
-            for (int j = 0; j < cells.GetLength(1); j++)
+        }
+            for (int j = 0; j<cells.GetLength(1); j++)
             {
                 List<Cell> match = new List<Cell>(GridSize) { cells[0, j] };
-                for (int i = 1; i < cells.GetLength(0); i++)
+                for (int i = 1; i<cells.GetLength(0); i++)
                 {
                     bool stop = false;
                     if (cells[i, j].Shape == match[0].Shape)
@@ -216,7 +206,7 @@ namespace MatchThreeGameForest.GameLogic
                                 newBonuses.Add(SpawnBonus(match, Bonus.LineVertical));
                             }
                             var intersect = toDestroy.Intersect(match);
-                            List<Cell> intersectList = intersect.ToList();
+List<Cell> intersectList = intersect.ToList();
                             foreach (var bonusCell in intersectList)
                             {
                                 match.Remove(bonusCell);
@@ -224,7 +214,7 @@ namespace MatchThreeGameForest.GameLogic
                                 bonusCell.Bonus = Bonus.Bomb;
                             }
                             toDestroy.AddRange(match);
-                            score += match.Count * 10;
+                            score += match.Count* 10;
                         }
                         match.Clear();
                         match.Add(cells[i, j]);
@@ -241,136 +231,136 @@ namespace MatchThreeGameForest.GameLogic
         }
 
         private Cell SpawnBonus(List<Cell> matchedCells, Bonus lineType)
-        {
-            Cell targetCell = matchedCells.Find(cell => (cell == selectedCell || cell == currentCell));
-            if (targetCell.Bonus != Bonus.None)
-                SpawnDestroyer(targetCell.Row, targetCell.Column, targetCell.Bonus);
+{
+    Cell targetCell = matchedCells.Find(cell => (cell == selectedCell || cell == currentCell));
+    if (targetCell.Bonus != Bonus.None)
+        SpawnDestroyer(targetCell.Row, targetCell.Column, targetCell.Bonus);
 
-            switch (matchedCells.Count)
-            {
-                case 4:
-                    targetCell.Bonus = lineType;
-                    break;
-                case 5:
-                    targetCell.Bonus = Bonus.Bomb;
-                    break;
-            }
-            return targetCell;
-        }
+    switch (matchedCells.Count)
+    {
+        case 4:
+            targetCell.Bonus = lineType;
+            break;
+        case 5:
+            targetCell.Bonus = Bonus.Bomb;
+            break;
+    }
+    return targetCell;
+}
 
-        internal void SpawnDestroyer(int row, int column, Bonus bonus)
-        {
-            switch (bonus)
-            {
-                case Bonus.LineVertical:
-                    destroyerList.Add(new Destroyer(new Vector2(column * CellSize.X + Location.X, (row - 0.5f) * CellSize.Y + Location.Y),
-                        Direction.Up));
-                    destroyerList.Add(new Destroyer(new Vector2(column * CellSize.X + Location.X, (row + 0.5f) * CellSize.Y + Location.Y),
-                        Direction.Down));
-                    break;
-                case Bonus.LineHorizontal:
-                    destroyerList.Add(new Destroyer(new Vector2((column - 0.5f) * CellSize.X + Location.X, row * CellSize.Y + Location.Y),
-                        Direction.Left));
-                    destroyerList.Add(new Destroyer(new Vector2((column + 0.5f) * CellSize.X + Location.X, row * CellSize.Y + Location.Y),
-                        Direction.Right));
-                    break;
-                case Bonus.Bomb:
-                    destroyerList.Add(new Destroyer(new Vector2(column * CellSize.X + Location.X, row * CellSize.Y + Location.Y),
-                        Direction.Detonate));
-                    break;
-            }
-        }
+internal void SpawnDestroyer(int row, int column, Bonus bonus)
+{
+    switch (bonus)
+    {
+        case Bonus.LineVertical:
+            destroyerList.Add(new Destroyer(new Vector2(column * CellSize.X + Location.X, (row - 0.5f) * CellSize.Y + Location.Y),
+                Direction.Up));
+            destroyerList.Add(new Destroyer(new Vector2(column * CellSize.X + Location.X, (row + 0.5f) * CellSize.Y + Location.Y),
+                Direction.Down));
+            break;
+        case Bonus.LineHorizontal:
+            destroyerList.Add(new Destroyer(new Vector2((column - 0.5f) * CellSize.X + Location.X, row * CellSize.Y + Location.Y),
+                Direction.Left));
+            destroyerList.Add(new Destroyer(new Vector2((column + 0.5f) * CellSize.X + Location.X, row * CellSize.Y + Location.Y),
+                Direction.Right));
+            break;
+        case Bonus.Bomb:
+            destroyerList.Add(new Destroyer(new Vector2(column * CellSize.X + Location.X, row * CellSize.Y + Location.Y),
+                Direction.Detonate));
+            break;
+    }
+}
 
-        internal void DropCells()
+internal void DropCells()
+{
+    for (int j = 0; j < cells.GetLength(1); j++)
+    {
+        for (int i = cells.GetLength(0) - 1; i > 0; i--)
         {
-            for (int j = 0; j < cells.GetLength(1); j++)
+            if (cells[i, j].Shape == ShapeType.Empty)
             {
-                for (int i = cells.GetLength(0) - 1; i > 0; i--)
+                int k = i - 1;
+                while (k >= 0 && cells[k, j].Shape == ShapeType.Empty)
                 {
-                    if (cells[i, j].Shape == ShapeType.Empty)
-                    {
-                        int k = i - 1;
-                        while (k >= 0 && cells[k, j].Shape == ShapeType.Empty)
-                        {
-                            k--;
-                        }
-                        if (k < 0) break;
-                        cells[k, j].FallInto(cells[i, j]);
-                    }
+                    k--;
                 }
+                if (k < 0) break;
+                cells[k, j].FallInto(cells[i, j]);
             }
         }
+    }
+}
 
-        internal bool UserInput()
+internal bool UserInput()
+{
+    MouseState mouseState = Mouse.GetState();
+
+    Rectangle fieldRect = new Rectangle(Location.X, Location.Y, CellSize.X * GridSize, CellSize.Y * GridSize);
+
+    if (fieldRect.Contains(mouseState.Position))
+    {
+        int i = (mouseState.Position.Y - fieldRect.Y) / CellSize.Y;
+        int j = (mouseState.Position.X - fieldRect.X) / CellSize.X;
+
+        if (currentCell != null && cells[i, j] != currentCell)
         {
-            MouseState mouseState = Mouse.GetState();
+            currentCell.State = CellState.Normal;
+        }
+        currentCell = cells[i, j];
 
-            Rectangle fieldRect = new Rectangle(Location.X, Location.Y, CellSize.X * GridSize, CellSize.Y * GridSize);
-
-            if (fieldRect.Contains(mouseState.Position))
-            {
-                int i = (mouseState.Position.Y - fieldRect.Y) / CellSize.Y;
-                int j = (mouseState.Position.X - fieldRect.X) / CellSize.X;
-
-                if (currentCell != null && cells[i, j] != currentCell)
-                {
-                    currentCell.State = CellState.Normal;
-                }
-                currentCell = cells[i, j];
-
-                if (mouseState.LeftButton == ButtonState.Released && currentCell.State == CellState.Pressed)
-                {
-                    currentCell.State = CellState.Hover;
-                    if (currentCell.IsSelected)
-                        ClearSelection();
-                    else if (selectedCell != null && currentCell.IsCloseTo(selectedCell))
-                        return true;
-                    else
-                        SelectCurrentCell();
-                }
-                else if (mouseState.LeftButton == ButtonState.Pressed)
-                {
-                    currentCell.State = CellState.Pressed;
-                }
-                else
-                {
-                    currentCell.State = CellState.Hover;
-                }
-            }
+        if (mouseState.LeftButton == ButtonState.Released && currentCell.State == CellState.Pressed)
+        {
+            currentCell.State = CellState.Hover;
+            if (currentCell.IsSelected)
+                ClearSelection();
+            else if (selectedCell != null && currentCell.IsCloseTo(selectedCell))
+                return true;
             else
-            {
-                if (currentCell != null)
-                {
-                    currentCell.State = CellState.Normal;
-                }
-            }
-            return false;
+                SelectCurrentCell();
         }
-
-        private void SelectCurrentCell()
+        else if (mouseState.LeftButton == ButtonState.Pressed)
         {
-            currentCell.SwitchSelection();
-            selectedCell?.SwitchSelection();
-            selectedCell = currentCell;
+            currentCell.State = CellState.Pressed;
         }
-
-        private void ClearSelection()
+        else
         {
-            currentCell.SwitchSelection();
-            selectedCell = null;
+            currentCell.State = CellState.Hover;
         }
-
-        internal void Swap()
+    }
+    else
+    {
+        if (currentCell != null)
         {
-            selectedCell.SwapWith(currentCell, false);
-            selectedCell.SwitchSelection();
+            currentCell.State = CellState.Normal;
         }
+    }
+    return false;
+}
 
-        internal void SwapBack()
-        {
-            currentCell.SwapWith(selectedCell, true);
-            selectedCell = null;
-        }
+private void SelectCurrentCell()
+{
+    currentCell.SwitchSelection();
+    selectedCell?.SwitchSelection();
+    selectedCell = currentCell;
+}
+
+private void ClearSelection()
+{
+    currentCell.SwitchSelection();
+    selectedCell = null;
+}
+
+internal void Swap()
+{
+    selectedCell.SwapWith(currentCell, false);
+    selectedCell.SwitchSelection();
+}
+
+internal void SwapBack()
+{
+    currentCell.SwapWith(selectedCell, true);
+    selectedCell = null;
+}
     }
 
 }
